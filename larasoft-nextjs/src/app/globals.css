@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+
+/* Global RTL and Background Fixes for LaraSoft */
+body {
+  direction: rtl;
+  text-align: right; 
+  min-height: 100vh;
+}
