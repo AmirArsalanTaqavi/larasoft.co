@@ -12,6 +12,8 @@ export default async function Home() {
     const latestPosts = await getPosts();
 
     return (
+        <div className="p-8 bg-background/90 max-w-7xl mx-auto relative z-10 rounded-xl shadow-xl mt-12"> 
+
         <main className="min-h-screen bg-gray-50 p-8">
             
             {/* --- 2. Display Homepage Content (The Welcome Message) --- */}
@@ -56,5 +58,6 @@ export default async function Home() {
                 ))}
             </div>
         </main>
+        </div>
     );
 }

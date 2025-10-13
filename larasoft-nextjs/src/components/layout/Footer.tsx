@@ -1,42 +1,45 @@
 import Link from 'next/link';
 
+// Inside src/components/layout/Footer.tsx
+// ...
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-800 text-white shadow-inner mt-12">
+    <footer className="bg-background text-text shadow-inner border-t border-primary mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         
         {/* Top Section: Quick Links & Social */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-b border-gray-700 pb-8 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-b border-primary/50 pb-8 mb-8">
           
           {/* 1. Services Links */}
           <div>
-            <h4 className="text-xl font-semibold mb-4 text-indigo-400">خدمات لارا سافت</h4>
+            <h4 className="text-xl font-semibold mb-4 text-primary">خدمات لارا سافت</h4>
             <ul className="space-y-2 text-right">
-              {/* NOTE: These links should be generated dynamically from getPages() for production */}
-              <li><Link href="/services/network-support" className="hover:text-indigo-200">پشتیبانی شبکه</Link></li>
-              <li><Link href="/services/web-development" className="hover:text-indigo-200">طراحی وب</Link></li>
-              <li><Link href="/services/cybersecurity" className="hover:text-indigo-200">امنیت سایبری</Link></li>
+              {/* NOTE: Add your newly planned links here */}
+              <li><Link href="/services/network-support" className="hover:text-accent transition-colors">پشتیبانی شبکه</Link></li>
+              <li><Link href="/services/web-development" className="hover:text-accent transition-colors">طراحی وب</Link></li>
+              <li><Link href="/services/hosting-domain" className="hover:text-accent transition-colors">هاستینگ و دامنه</Link></li>
+              <li><Link href="/services/cybersecurity" className="hover:text-accent transition-colors">امنیت سایبری</Link></li>
             </ul>
           </div>
           
           {/* 2. Quick Links */}
           <div>
-            <h4 className="text-xl font-semibold mb-4 text-indigo-400">لینک‌های سریع</h4>
+            <h4 className="text-xl font-semibold mb-4 text-primary">لینک‌های سریع</h4>
             <ul className="space-y-2 text-right">
-              <li><Link href="/about" className="hover:text-indigo-200">درباره ما</Link></li>
-              <li><Link href="/contact" className="hover:text-indigo-200">تماس با ما</Link></li>
-              <li><Link href="/post/hello-world" className="hover:text-indigo-200">آخرین مقاله</Link></li>
+              <li><Link href="/about" className="hover:text-accent transition-colors">درباره ما</Link></li>
+              <li><Link href="/contact" className="hover:text-accent transition-colors">تماس با ما</Link></li>
+              <li><Link href="/post/latest-article-slug" className="hover:text-accent transition-colors">آخرین مقاله</Link></li>
             </ul>
           </div>
 
-          {/* 3. Partner / Spouse Brand Link */}
+          {/* 3. Partner / Spouse Brand Link (Sara's Gallery) */}
           <div className="col-span-2 md:col-span-1">
-            <h4 className="text-xl font-semibold mb-4 text-indigo-400">برندهای همکار</h4>
+            <h4 className="text-xl font-semibold mb-4 text-primary">برندهای همکار</h4>
             <ul className="space-y-2 text-right">
               <li>
-                <a href="https://instagram.com/Jute_gallery" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400">
+                <a href="https://instagram.com/Jute_gallery" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-text transition-colors">
                   Jute_gallery (هنر مینیاتور) &rarr;
                 </a>
               </li>

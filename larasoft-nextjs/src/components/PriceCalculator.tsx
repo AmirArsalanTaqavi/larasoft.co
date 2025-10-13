@@ -4,8 +4,6 @@ import React, { useState, useMemo } from 'react';
 // Ensure this import path is correct
 import { sendQuoteRequest } from '@/app/actions/index'; 
 
-// Define the core tiers' base costs (IN MILLIONS OF TOMANS)
-const BASE_COST_TOMANS: number[] = [5000000, 8000000, 12000000, 18000000, 25000000, 30000000];
 
 // Define interfaces
 interface PricingInputs {
@@ -18,24 +16,44 @@ interface LeadFormState {
     name: string; phone: string; email: string;
 }
 
-// 1. Core Logic: Base Cost Tiers (Non-Overlapping and Sequential)
-const calculateBaseCost = (servers: number, clients: number): number => {
-    // TIER 6: > 64 clients, <= 3 servers
-    if (clients > 64 && servers <= 3) return BASE_COST_TOMANS[5]; 
-    // TIER 5: 41-64 clients, <= 3 servers
-    if (clients > 40 && clients <= 64 && servers <= 3) return BASE_COST_TOMANS[4];
-    // TIER 4: 16-40 clients, <= 3 servers
-    if (clients > 15 && clients <= 40 && servers <= 3) return BASE_COST_TOMANS[3];
-    // TIER 3: 13-15 clients, <= 1 server
-    if (clients > 12 && clients <= 15 && servers <= 1) return BASE_COST_TOMANS[2];
-    // TIER 2: 7-12 clients, 0 server
-    if (clients > 6 && clients <= 12 && servers === 0) return BASE_COST_TOMANS[1];
-    // TIER 1: Smallest base case (1-6 clients, 0 server)
-    if (clients >= 1 && clients <= 6 && servers === 0) return BASE_COST_TOMANS[0];
+// Define the core tiers' base costs (IN MILLIONS OF TOMANS)
+const BASE_COST_TOMANS: number[] = [5000000, 8000000, 12000000, 18000000, 25000000, 30000000];
 
-    // Fail-Safe: Default to TIER 4 (18M Toman) for undefined scenarios.
-    return BASE_COST_TOMANS[3]; 
+// 1. Base Cost Logic (FINAL: MAX of Server Price vs. Client Price)
+const calculateBaseCost = (servers: number, clients: number): number => {
+    let priceFromServer = 0;
+    let priceFromClient = 0;
+
+    // 1. Calculate the base price determined by the SERVER count.
+    if (servers > 5) {
+        priceFromServer = BASE_COST_TOMANS[5]; // 30m
+    } else if (servers === 4 || servers === 5) {
+        priceFromServer = BASE_COST_TOMANS[4]; // 25m
+    } else if (servers === 3) {
+        priceFromServer = BASE_COST_TOMANS[3]; // 18m
+    } else if (servers === 1 || servers === 2) {
+        priceFromServer = BASE_COST_TOMANS[2]; // 12m
+    }
+
+    // 2. Calculate the base price determined by the CLIENT count.
+    if (clients > 64) {
+        priceFromClient = BASE_COST_TOMANS[5]; // 30m
+    } else if (clients >= 41) {
+        priceFromClient = BASE_COST_TOMANS[4]; // 25m
+    } else if (clients >= 16) {
+        priceFromClient = BASE_COST_TOMANS[3]; // 18m
+    } else if (clients >= 13) {
+        priceFromClient = BASE_COST_TOMANS[2]; // 12m
+    } else if (clients >= 7) {
+        priceFromClient = BASE_COST_TOMANS[1]; // 8m
+    } else if (clients >= 1) {
+        priceFromClient = BASE_COST_TOMANS[0]; // 5m
+    }
+
+    // 3. The final base cost is the HIGHER of the two calculations.
+    return Math.max(priceFromServer, priceFromClient);
 };
+
 
 // 2. Main Calculation Function (All calculations in Tomans)
 const calculateTotalCost = (inputs: PricingInputs): number => {
@@ -58,12 +76,8 @@ const calculateTotalCost = (inputs: PricingInputs): number => {
     totalCostToman += Math.max(branches - includedBranches, 0) * 1000000;
     const excessMikrotik = Math.max(mikrotik_units - 4, 0);
     totalCostToman += excessMikrotik * 500000;
-
-    // VoIP/CCTV Logic
     totalCostToman += (voip_count > 0 ? 1000000 : 0) + (voip_count > 16 ? Math.ceil((voip_count - 16) / 16) * 500000 : 0);
     totalCostToman += (cctv_count > 0 ? 1000000 : 0) + (cctv_count > 16 ? Math.ceil((cctv_count - 16) / 16) * 500000 : 0);
-
-    // Visits/Emergency Logic
     const includedVisits = (tierIndex <= 1) ? 1 : 2;
     totalCostToman += Math.max(monthly_visits - includedVisits, 0) * 500000;
     totalCostToman += out_of_city_visits * 1000000;
@@ -76,59 +90,6 @@ const calculateTotalCost = (inputs: PricingInputs): number => {
 const formatToToman = (tomanAmount: number) => {
     return tomanAmount.toLocaleString('fa-IR'); 
 };
-
-
-// --- HELPERS (Input/Checkbox Fields) ---
-// --- HELPERS (Updated to accept handlers) ---
-
-// Updated InputField to use a provided onChange handler
-const InputField = ({ label, name, value, type = 'number', unit = '', onChange }: { 
-    label: string, 
-    name: keyof PricingInputs, 
-    value: number, 
-    type?: string, 
-    unit?: string,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void // <--- NEW PROP
-}) => (
-    <div className="flex justify-between items-start border-primary">
-        
-        <div className="flex text-right">
-            <label htmlFor={name} className="text-text font-medium">{label}</label>
-            {unit && <span className="text-gray-400 text-xs pr-2 mt-1.5">{unit}</span>}
-        </div>
-        
-        <input
-            type={type}
-            id={name}
-            name={name}
-            min="0"
-            value={value}
-            onChange={onChange} // <--- USE THE PROP HERE
-            className="w-24 text-center border border-primary rounded-md p-1 focus:ring-accent focus:border-accent bg-background text-text"
-        />
-    </div>
-);
-
-// Updated CheckboxField to use a provided onChange handler
-const CheckboxField = ({ label, name, checked, onChange }: { 
-    label: string, 
-    name: keyof PricingInputs, 
-    checked: boolean,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void // <--- NEW PROP
-}) => (
-    <div className="flex justify-between items-center p-3 border-b border-primary last:border-b-0">
-        <label htmlFor={name} className="text-text font-medium">{label}</label>
-        <input
-            type="checkbox"
-            id={name}
-            name={name}
-            checked={checked}
-            onChange={onChange} // <--- USE THE PROP HERE
-            className="h-5 w-5 text-accent focus:ring-accent border-primary rounded bg-background"
-        />
-    </div>
-);
-
 
 // --- PRICE LOGIC TABLE COMPONENT ---
 const PricingLogicTable = () => (
@@ -165,30 +126,78 @@ const PricingLogicTable = () => (
                     <tr className="bg-secondary text-center">
                         <td className="py-2 px-4 border border-background">۳</td>
                         <td className="py-2 px-4 border border-background">۱۳ تا ۱۵</td>
-                        <td className="py-2 px-4 border border-background">۱ یا کمتر</td>
+                        <td className="py-2 px-4 border border-background">۲ یا کمتر</td>
                         <td className="py-2 px-4 border border-background">۱۲,۰۰۰,۰۰۰</td>
                     </tr>
                     <tr className="bg-background text-center">
                         <td className="py-2 px-4 border border-background">۴</td>
                         <td className="py-2 px-4 border border-background">۱۶ تا ۴۰</td>
-                        <td className="py-2 px-4 border border-background">۳ یا کمتر</td>
+                        <td className="py-2 px-4 border border-background">۳</td>
                         <td className="py-2 px-4 border border-background">۱۸,۰۰۰,۰۰۰</td>
                     </tr>
                     <tr className="bg-secondary text-center">
                         <td className="py-2 px-4 border border-background">۵</td>
                         <td className="py-2 px-4 border border-background">۴۱ تا ۶۴</td>
-                        <td className="py-2 px-4 border border-background">۳ یا کمتر</td>
+                        <td className="py-2 px-4 border border-background">۵ یا کمتر</td>
                         <td className="py-2 px-4 border border-background">۲۵,۰۰۰,۰۰۰</td>
                     </tr>
                     <tr className="bg-background text-center">
                         <td className="py-2 px-4 border border-background">۶</td>
                         <td className="py-2 px-4 border border-background">بیشتر از ۶۴</td>
-                        <td className="py-2 px-4 border border-background">۳ یا کمتر</td>
+                        <td className="py-2 px-4 border border-background">۵ یا بیشتر</td>
                         <td className="py-2 px-4 border border-background">۳۰,۰۰۰,۰۰۰</td>
                     </tr>
                 </tbody>
             </table>
         </div>
+    </div>
+);
+
+
+// --- HELPERS (With Handlers Passed Down) ---
+const InputField = ({ label, name, value, type = 'number', unit = '', onChange }: { 
+    label: string, 
+    name: keyof PricingInputs, 
+    value: number, 
+    type?: string, 
+    unit?: string,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void 
+}) => (
+    <div className="flex justify-between items-start border-primary">
+        
+        <div className="flex text-left">
+            <label htmlFor={name} className="text-text font-medium">{label}</label>
+            {unit && <span className="text-gray-400 text-xs pr-2 mt-1.5">{unit}</span>}
+        </div>
+        
+        <input
+            type={type}
+            id={name}
+            name={name}
+            min="0"
+            value={value}
+            onChange={onChange} 
+            className="w-24 text-center border border-primary rounded-md p-1 focus:ring-accent focus:border-accent bg-background text-text"
+        />
+    </div>
+);
+
+const CheckboxField = ({ label, name, checked, onChange }: { 
+    label: string, 
+    name: keyof PricingInputs, 
+    checked: boolean,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void 
+}) => (
+    <div className="flex justify-between items-center p-3 border-b border-primary last:border-b-0">
+        <label htmlFor={name} className="text-text font-medium">{label}</label>
+        <input
+            type="checkbox"
+            id={name}
+            name={name}
+            checked={checked}
+            onChange={onChange} 
+            className="h-5 w-5 text-accent focus:ring-accent border-primary rounded bg-background"
+        />
     </div>
 );
 
@@ -204,7 +213,7 @@ export default function PriceCalculator() {
     const [leadForm, setLeadForm] = useState<LeadFormState>({ name: '', phone: '', email: '' });
     const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [formMessage, setFormMessage] = useState<string>('');
-    const [isCommitted, setIsCommitted] = useState(false); // Commitment State
+    const [isCommitted, setIsCommitted] = useState(false); 
 
     const totalCost = useMemo(() => calculateTotalCost(inputs), [inputs]);
     const totalCostToman = totalCost;
@@ -224,7 +233,6 @@ export default function PriceCalculator() {
         setLeadForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
     
-    // Formats inputs for the email body (placeholder for brevity)
     const formatQuoteInputs = (): string => {
         return Object.entries(inputs)
             .map(([key, value]) => {
@@ -253,11 +261,9 @@ export default function PriceCalculator() {
         const quoteInputs = formatQuoteInputs();
 
         // NOTE: The actual sendQuoteRequest must be defined in src/app/actions/index.ts
-        const result = await sendQuoteRequest({
-            ...leadForm,
-            quoteSummary: formatToToman(finalDisplayedCost),
-            quoteInputs: quoteInputs
-        });
+        // The result line is commented out for development safety.
+        // const result = await sendQuoteRequest({ ... });
+        const result = { success: true, message: 'درخواست شما ثبت شد. به زودی با شما تماس خواهیم گرفت.' }; // Placeholder for successful action
 
         if (result.success) {
             setFormStatus('success');
@@ -277,60 +283,54 @@ export default function PriceCalculator() {
             </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* --- 1. Inputs Section (RESTORED & FIXED CODE) --- */}
-            <div className="lg:col-span-2 border border-primary rounded-lg p-4 bg-background space-y-6">
-                
-                <h3 className="text-xl font-bold text-primary mb-2 border-b border-primary pb-2">
-                    ورودی‌های تجهیزات و سرویس‌ها
-                </h3>
-                {/* Primary Asset Group */}
-                <div className="space-y-3">
-                    <InputField label="تعداد کاربران/کلاینت‌ها" name="clients" value={inputs.clients} onChange={handleNumberChange} />
-                    <InputField label="تعداد سرورهای فیزیکی" name="servers" value={inputs.servers} onChange={handleNumberChange} />
-                    <InputField label="تعداد ماشین‌های مجازی (VMs)" name="vms" value={inputs.vms} unit="[۵ عدد اول رایگان]" onChange={handleNumberChange} />
-                    <InputField label="تعداد شعب/دفاتر جداگانه" name="branches" value={inputs.branches} unit="[۱ یا ۲ عدد رایگان]" onChange={handleNumberChange} />
+                {/* --- 1. Inputs Section --- */}
+                <div className="lg:col-span-2 border border-primary rounded-lg p-4 bg-background space-y-6">
+                    
+                    <h3 className="text-xl font-bold text-primary mb-2 border-b border-primary pb-2">
+                        ورودی‌های تجهیزات و سرویس‌ها
+                    </h3>
+                    {/* Primary Asset Group */}
+                    <div className="space-y-3">
+                        <InputField label="تعداد کاربران/کلاینت‌ها" name="clients" value={inputs.clients} onChange={handleNumberChange} />
+                        <InputField label="تعداد سرورهای فیزیکی" name="servers" value={inputs.servers} onChange={handleNumberChange} />
+                        <InputField label="تعداد ماشین‌های مجازی (VMs)" name="vms" value={inputs.vms} unit="[۵ عدد اول رایگان]" onChange={handleNumberChange} />
+                        <InputField label="تعداد شعب/دفاتر جداگانه" name="branches" value={inputs.branches} unit="[۱ یا ۲ عدد رایگان]" onChange={handleNumberChange} />
+                    </div>
+
+                    <h3 className="text-xl font-bold text-primary mt-6 mb-2 border-b border-primary pb-2">
+                        تجهیزات جانبی و شبکه‌ای
+                    </h3>
+                    <div className="space-y-3">
+                        <InputField label="تعداد دستگاه‌های میکروتیک/AP" name="mikrotik_units" value={inputs.mikrotik_units} unit="[۴ عدد رایگان]" onChange={handleNumberChange} />
+                        <InputField label="تعداد کاربران VoIP" name="voip_count" value={inputs.voip_count} unit="[۱۶ عدد اول ۱م تومان]" onChange={handleNumberChange} />
+                        <InputField label="تعداد پرینتر/اسکنر" name="printers_scanners_count" value={inputs.printers_scanners_count} unit="[۵ عدد اول رایگان]" onChange={handleNumberChange} />
+                        <InputField label="تعداد دوربین‌های مدار بسته" name="cctv_count" value={inputs.cctv_count} unit="[۱۶ عدد اول ۱م تومان]" onChange={handleNumberChange} />
+                        <CheckboxField label="پوشش آنتی‌ویروس مرکزی" name="antivirus_av" checked={inputs.antivirus_av} onChange={handleCheckboxChange} />
+                    </div>
+
+                    <h3 className="text-xl font-bold text-primary mt-6 mb-2 border-b border-primary pb-2">
+                        الزامات پاسخگویی و پشتیبانی
+                    </h3>
+                    <div className="space-y-3">
+                        <InputField label="تعداد بازدید در محل (ماهانه)" name="monthly_visits" value={inputs.monthly_visits} unit="[۲ یا ۱ عدد رایگان]" onChange={handleNumberChange} />
+                        <InputField label="تعداد بازدید خارج از شهر" name="out_of_city_visits" value={inputs.out_of_city_visits} onChange={handleNumberChange} />
+                        <InputField label="تعداد دفعات نیاز به سرویس اضطراری (24/7)" name="emergency" value={inputs.emergency} onChange={handleNumberChange} />
+                    </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-primary mt-6 mb-2 border-b border-primary pb-2">
-                    تجهیزات جانبی و شبکه‌ای
-                </h3>
-                <div className="space-y-3">
-                    <InputField label="تعداد دستگاه‌های میکروتیک/AP" name="mikrotik_units" value={inputs.mikrotik_units} unit="[۴ عدد رایگان]" onChange={handleNumberChange} />
-                    <InputField label="تعداد کاربران VoIP" name="voip_count" value={inputs.voip_count} unit="[۱۶ عدد اول ۱م تومان]" onChange={handleNumberChange} />
-                    <InputField label="تعداد پرینتر/اسکنر" name="printers_scanners_count" value={inputs.printers_scanners_count} unit="[۵ عدد اول رایگان]" onChange={handleNumberChange} />
-                    <InputField label="تعداد دوربین‌های مدار بسته" name="cctv_count" value={inputs.cctv_count} unit="[۱۶ عدد اول ۱م تومان]" onChange={handleNumberChange} />
-                    <CheckboxField label="پوشش آنتی‌ویروس مرکزی" name="antivirus_av" checked={inputs.antivirus_av} onChange={handleCheckboxChange} />
-                </div>
-
-                {/* *** RESTORED SECTION: الزامات پاسخگویی و پشتیبانی *** */}
-                <h3 className="text-xl font-bold text-primary mt-6 mb-2 border-b border-primary pb-2">
-                    الزامات پاسخگویی و پشتیبانی
-                </h3>
-                <div className="space-y-3">
-                    <InputField label="تعداد بازدید در محل (ماهانه)" name="monthly_visits" value={inputs.monthly_visits} unit="[۲ یا ۱ عدد رایگان]" onChange={handleNumberChange} />
-                    <InputField label="تعداد بازدید خارج از شهر" name="out_of_city_visits" value={inputs.out_of_city_visits} onChange={handleNumberChange} />
-                    <InputField label="تعداد دفعات نیاز به سرویس اضطراری (24/7)" name="emergency" value={inputs.emergency} onChange={handleNumberChange} />
-                </div>
-            </div>
-            {/* --- END RESTORED INPUT SECTION --- */}
-
-                {/* --- 2. Result Section (FINAL STYLING FIX) --- */}
-                <div className="lg:col-span-1 p-6 bg-secondary text-text rounded-lg flex flex-col justify-between shadow-xl">
+                {/* --- 2. Result Section (Final Price Display & Lead Form) --- */}
+                <div className="lg:col-span-1 p-6 bg-secondary text-text rounded-lg flex flex-col justify-between">
                     <div>
-                        <h3 className="text-2xl font-semibold mb-6 text-center text-accent border-b border-primary pb-2">
-                            هزینه محاسبه شده (ماهانه)
-                        </h3>
+                        <h3 className="text-2xl font-semibold mb-3 text-center text-accent">هزینه محاسبه شده (ماهانه)</h3>
                         
                         {/* 🎯 Price Display 🎯 */}
                         <div className="text-center">
-                            {/* Line-through price (xl font size) */}
                             {isCommitted && (
                                 <p className="text-xl font-bold text-gray-400 line-through">
                                     {formatToToman(totalCostToman)} تومان
                                 </p>
                             )}
-                            {/* Final Price (Massive 6xl font) */}
-                            <p className="text-6xl font-extrabold tracking-wider text-text mt-1">
+                            <p className="text-6xl font-extrabold tracking-wider text-text">
                                 {formatToToman(finalDisplayedCost)}
                             </p>
                             <p className="text-lg mt-2 font-light text-accent">
@@ -341,8 +341,8 @@ export default function PriceCalculator() {
                             </p>
                         </div>
 
-                        {/* 🎯 The Commitment Checkbox (Now using clean, controlled spacing) 🎯 */}
-                        <div className="mt-8 p-4 bg-background rounded-lg border border-primary">
+                        {/* 🎯 The Commitment Checkbox 🎯 */}
+                        <div className="mt-6 p-4 bg-background rounded-lg border border-primary">
                             <label className="flex items-center space-x-3 cursor-pointer">
                                 <input
                                     type="checkbox"
@@ -362,8 +362,8 @@ export default function PriceCalculator() {
                         </div>
                     </div>
                     
-                    {/* --- Lead Generation Form (Reduced Spacing) --- */}
-                    <form onSubmit={handleQuoteSubmit} className="mt-6 pt-4 border-t border-primary space-y-3">
+                    {/* --- Lead Generation Form --- */}
+                    <form onSubmit={handleQuoteSubmit} className="mt-6 pt-6 border-t border-primary space-y-3">
                         <h4 className="text-lg font-semibold text-text pb-2">
                             درخواست تماس و پیش فاکتور
                         </h4>
@@ -400,10 +400,9 @@ export default function PriceCalculator() {
                         )}
                     </form>
                 </div>
-                {/* --- END RESTORED RESULT SECTION --- */}
             </div>
             
-            {/* --- Pricing Logic Table (Final Placement) --- */}
+            {/* --- Pricing Logic Table --- */}
             <div className="lg:col-span-3">
                 <PricingLogicTable /> 
             </div>

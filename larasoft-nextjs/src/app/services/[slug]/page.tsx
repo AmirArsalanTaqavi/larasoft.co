@@ -1,11 +1,13 @@
 import { getPageBySlug, getPages } from '@/lib/wordpress'; 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import PriceCalculator from '@/components/PriceCalculator'; // <-- Calculator component imported
+import PriceCalculator from '@/components/PriceCalculator';
 
-// 1. Dynamic Metadata for SEO
+// 1. Dynamic Metadata for SEO (FIXED: Destructuring)
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-    const service = await getPageBySlug(params.slug); 
+    const { slug } = params; // FIX: Destructuring parameter
+    const service = await getPageBySlug(slug); // Use destructured slug
+    
     if (!service) {
         return { title: 'Service Not Found | LaraSoft' };
     }
@@ -25,44 +27,48 @@ export async function generateStaticParams() {
     }));
 }
 
-// 3. The Single Service Page Component
+// 3. The Single Service Page Component (FIXED: Destructuring in component body)
 export default async function SingleServicePage({ params }: { params: { slug: string } }) {
+    const { slug } = params; // FIX: Destructuring parameter
+    
     // Fetch the full content based on the URL slug
-    const service = await getPageBySlug(params.slug);
+    const service = await getPageBySlug(slug);
 
     if (!service) {
         notFound();
     }
 
     // Define the specific slug for the calculator page.
-    // NOTE: Ensure your "Network Support" page in WordPress uses this exact slug.
     const calculatorSlug = 'network-support'; 
 
     return (
-        <main className="min-h-screen bg-gray-50 p-10">
-            
+        <main className="p-10"> 
+
             {/* 🎯 Section A: Main Service Content (Always displayed) 🎯 */}
-            <article className="max-w-5xl mx-auto bg-white p-12 rounded-xl shadow-2xl">
+            <article className="max-w-5xl mx-auto bg-background/90 p-12 rounded-xl shadow-2xl relative z-20"> 
                 
-                <h1 className="text-4xl font-extrabold text-indigo-700 mb-6">
+                <h1 className="text-4xl font-extrabold text-primary mb-6">
                     خدمات: {service.title.rendered}
                 </h1>
                 
                 <div 
-                    className="prose prose-lg max-w-none text-gray-700 mt-8" 
+                    className="prose prose-lg max-w-none text-text mt-8"
                     dangerouslySetInnerHTML={{ __html: service.content.rendered }} 
                 />
             </article>
 
             {/* 🎯 Section B: Price Calculator (Conditionally displayed) 🎯 */}
-            {params.slug === calculatorSlug && (
-                <div className="max-w-5xl mx-auto mt-12">
+            {slug === calculatorSlug && ( // FIX: Use destructured slug here
+                <div className="max-w-5xl mx-auto mt-12 relative z-20 bg-transparent">
                     <PriceCalculator />
                 </div>
             )}
             
             {/* Section C: Back Link (Always displayed) */}
-            <Link href="/" className="block text-center mt-12 text-xl text-indigo-600 hover:text-indigo-800 transition-colors duration-200">
+            <Link 
+                href="/" 
+                className="block text-center mt-12 text-xl text-primary hover:text-accent transition-colors duration-200"
+            >
                 &larr; بازگشت به صفحه اصلی
             </Link>
         </main>

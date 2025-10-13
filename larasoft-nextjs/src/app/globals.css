@@ -1,9 +1,27 @@
+/* src/globals.css - Tailwind V4 STANDARD IMPORT */
 @import "tailwindcss";
 
 
-/* Global RTL and Background Fixes for LaraSoft */
+/* Global HTML/Body Structure and LaraSoft Theme */
 body {
-  direction: rtl;
-  text-align: right; 
-  min-height: 100vh;
+    /* ... (RTL settings) ... */
+    background-color: #002924; 
+    background-image: url('/images/abstract_bg.svg'); 
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover; 
+}
+
+/* Subtly darken the entire screen using a pseudo-element overlay for better text contrast */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 40% transparency of your background color #002924 */
+    background-color: rgba(0, 41, 36, 0.4); 
+    z-index: -1; 
 }

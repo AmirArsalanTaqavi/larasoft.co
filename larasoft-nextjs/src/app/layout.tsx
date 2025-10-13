@@ -9,13 +9,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fa" dir="rtl">
-      {/* Apply custom colors to the body */}
-      <body className="bg-background text-text"> 
-        
+      <body className="bg-background text-text">
         <Header />
-        
-        {/* The main content area of the current page */}
-        <main>{children}</main> 
+        <main 
+            className="min-h-screen relative">
+          {children}
+        </main>
         
         <Footer />
       </body>
