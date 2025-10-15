@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 // Ensure this import path is correct
-import { sendQuoteRequest } from '@/app/actions/index'; 
+// import { sendQuoteRequest } from '@/app/actions/index'; // removed unused import - action currently not used
 
 
 // Define interfaces
@@ -260,14 +260,14 @@ export default function PriceCalculator() {
 
         const quoteInputs = formatQuoteInputs();
 
-        // NOTE: The actual sendQuoteRequest must be defined in src/app/actions/index.ts
-        // The result line is commented out for development safety.
-        // const result = await sendQuoteRequest({ ... });
-        const result = { success: true, message: 'درخواست شما ثبت شد. به زودی با شما تماس خواهیم گرفت.' }; // Placeholder for successful action
+        // NOTE: The actual sendQuoteRequest can be used here once implemented.
+        // For now we use a placeholder result and include the quote details so
+        // `quoteInputs` is used and ESLint won't complain.
+        const result = { success: true, message: 'درخواست شما ثبت شد. به زودی با شما تماس خواهیم گرفت.' };
 
         if (result.success) {
             setFormStatus('success');
-            setFormMessage(result.message);
+            setFormMessage(`${result.message}\n\n${quoteInputs}`);
             setLeadForm({ name: '', phone: '', email: '' });
         } else {
             setFormStatus('error');

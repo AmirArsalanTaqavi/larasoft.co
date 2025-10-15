@@ -29,6 +29,7 @@ services:
     volumes:
 
       - wp_data:/var/www/html
+      - ./larasoft-theme:/var/www/html/wp-content/themes/larasoft-theme
     restart: always
 
 volumes:

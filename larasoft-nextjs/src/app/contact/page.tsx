@@ -1,34 +1,34 @@
+// src/app/contact/page.tsx
+
 import ContactForm from '@/components/ContactForm';
-import { getPageBySlug, WpPost } from '@/lib/wordpress'; 
+// 1. Correct the import statement
+import { getItemBySlug } from '@/lib/wordpress'; 
 import { notFound } from 'next/navigation';
-// NOTE: We will import the ContactForm component later
 
 export default async function ContactPage() {
-    // Fetch the contact page content by its clean slug 'contact'
-    const contactContent: WpPost | null = await getPageBySlug('contact');
+  // 2. Use the new function and specify you're looking for a 'page'
+  const page = await getItemBySlug('contact', 'pages');
 
-    if (!contactContent) {
-        notFound();
-    }
+  // If the page with slug 'contact' doesn't exist in WordPress, show a 404 page
+  if (!page) {
+    notFound();
+  }
 
-    return (
-        <main className="min-h-screen p-10 max-w-4xl mx-auto">
-            <h1 className="text-4xl font-bold text-center mb-6">
-                {contactContent.title.rendered}
-            </h1>
-            
-            {/* Display static content (e.g., address, phone) */}
-            <div 
-                className="prose mx-auto mb-10 text-gray-700 text-center"
-                dangerouslySetInnerHTML={{ __html: contactContent.content.rendered }}
-            />
-            
-            <h2 className="text-2xl font-semibold mb-4 text-center">ارسال پیام</h2>
-            
-            <div className="border p-8 rounded-lg shadow-lg bg-white">
-                <ContactForm /> {/* <-- Now the component is active */}
-            </div>
-            
-        </main>
-    );
+  return (
+    <main className="container mx-auto px-4 pt-28 pb-12">
+      <div className="max-w-3xl mx-auto text-center">
+        <h1 
+          className="text-4xl md:text-5xl font-extrabold mb-4 text-text"
+          dangerouslySetInnerHTML={{ __html: page.title.rendered }} 
+        />
+        
+        <div 
+          className="prose lg:prose-xl mx-auto text-text/80"
+          dangerouslySetInnerHTML={{ __html: page.content.rendered }} 
+        />
+      </div>
+
+      <ContactForm />
+    </main>
+  );
 }

@@ -1,63 +1,103 @@
-import { getPageBySlug, getPages, getPosts,WpPost} from '@/lib/wordpress'; 
+// src/app/page.tsx
 
-export default async function Home() {
-    // --- 1. Fetch Key Data ---
-    // Fetch the main content of the Homepage using the English slug 'home'
-    const homepageContent = await getPageBySlug('home'); 
-    
-    // Fetch all the service pages (for the Features section)
-    const services = await getPages(); 
+import { getItemBySlug, getPages, getAcfOptions, getPosts } from '@/lib/wordpress';
+import Link from 'next/link';
 
-    // Fetch the latest blog posts
-    const latestPosts = await getPosts();
+export default async function HomePage() {
+  // --- Fetch All Data in Parallel ---
+  const [homepageContent, services, siteOptions, latestPosts] = await Promise.all([
+    getItemBySlug('home', 'pages'),
+    getPages(),
+    getAcfOptions(),
+    getPosts() // Fetching the latest posts
+  ]);
 
-    return (
-        <div className="p-8 bg-background/90 max-w-7xl mx-auto relative z-10 rounded-xl shadow-xl mt-12"> 
+  const heroImageUrl = siteOptions?.hero_background_image?.url;
+  
+  if (!homepageContent) {
+    return <p className="text-center p-12 text-text">محتوای صفحه اصلی یافت نشد.</p>;
+  }
 
-        <main className="min-h-screen bg-gray-50 p-8">
-            
-            {/* --- 2. Display Homepage Content (The Welcome Message) --- */}
-            {homepageContent && (
-                <div className="text-center mb-16 bg-indigo-100 p-8 rounded-xl shadow-inner">
-                    <h1 className="text-5xl font-extrabold text-indigo-900 mb-4">
-                        {homepageContent.title.rendered}
-                    </h1>
-                    <div 
-                        className="text-xl text-gray-700"
-                        dangerouslySetInnerHTML={{ __html: homepageContent.content.rendered }}
-                    />
-                </div>
-            )}
+  // --- Extract ACF Fields with Fallbacks ---
+  const acf = homepageContent.acf as Record<string, unknown> | undefined;
 
-            {/* --- 3. Services/Features Section --- */}
-            <h2 className="text-3xl text-right my-8">خدمات تخصصی لارا سافت</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                {services.map((service: WpPost) => ( (
-                    <div key={service.id} className="p-4 border shadow-md text-right bg-white rounded-lg">
-                        <h3 className="text-xl font-bold">{service.title.rendered}</h3>
-                        {/* Note: Using excerpt for a short description on the homepage */}
-                        <div 
-                            dangerouslySetInnerHTML={{ __html: service.excerpt.rendered }} 
-                            className="text-gray-600 mt-2"
-                        />
-                        <a href={`/services/${service.slug}`} className="text-indigo-600 hover:text-indigo-800 mt-3 block">بیشتر &rarr;</a>
-                    </div>
-                )))}
-            </div>
+  // Safely coerce ACF values to strings (if present) to satisfy ReactNode typing
+  const heroTitle = typeof acf?.hero_title === 'string' ? acf.hero_title : homepageContent.title.rendered;
+  const heroSubtitle = typeof acf?.hero_subtitle === 'string' ? acf.hero_subtitle : '';
+  const heroButtonText = typeof acf?.hero_button_text === 'string' ? acf.hero_button_text : '';
+  const heroButtonLink = typeof acf?.hero_button_link === 'string' ? acf.hero_button_link : '#';
+  const servicesTitle = typeof acf?.services_section_title === 'string' ? acf.services_section_title : 'خدمات ما';
+  const postsTitle = typeof acf?.posts_section_title === 'string' ? acf.posts_section_title : 'آخرین مقالات و اخبار';
 
-            {/* --- 4. Blog/Posts Section --- */}
-            <h2 className="text-3xl text-right my-8 mt-12">آخرین مقالات</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                {latestPosts.map((post) => (
-                    <article key={post.id} className="bg-white p-6 rounded-lg shadow-lg">
-                        <h3 className="text-xl font-semibold text-gray-800 mb-3 text-right">
-                            {post.title.rendered}
-                        </h3>
-                        <a href={`/post/${post.slug}`} className="text-indigo-600 hover:text-indigo-800 font-medium block mt-3">ادامه مطلب &rarr;</a>
-                    </article>
-                ))}
-            </div>
-        </main>
+  return (
+    <main>
+      {/* --- HERO SECTION --- */}
+      <section 
+        className="relative min-h-screen bg-cover bg-center flex items-center justify-center text-center p-4"
+        style={{ backgroundImage: heroImageUrl ? `url(${heroImageUrl})` : 'none' }}
+      >
+        <div className="absolute inset-0 bg-background/80"></div>
+        <div className="relative z-10">
+          <h1 className="text-5xl md:text-7xl font-bold text-text leading-tight font-secondary">
+            {heroTitle}
+          </h1>
+          <p className="mt-4 text-xl text-text/80 max-w-3xl mx-auto">
+            {heroSubtitle}
+          </p>
+          {heroButtonText && (
+            <Link 
+              href={heroButtonLink}
+              className="mt-8 inline-block bg-accent text-background font-bold px-8 py-3 rounded-lg hover:bg-primary transition-colors shadow-lg"
+            >
+              {heroButtonText}
+            </Link>
+          )}
         </div>
-    );
+      </section>
+
+      {/* --- SERVICES SECTION --- */}
+      <section className="py-16 sm:py-24 bg-surface">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold text-text font-secondary mb-12">
+            {servicesTitle}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service) => (
+              <Link href={`/services/${service.slug}`} key={service.id} className="group block p-8 border border-text/10 shadow-lg text-center bg-background rounded-lg hover:bg-primary/10 hover:shadow-accent/20 transition-all duration-300">
+                <h3 className="text-2xl font-bold text-primary font-secondary group-hover:text-accent transition-colors">
+                  {service.title.rendered}
+                </h3>
+                <div 
+                  dangerouslySetInnerHTML={{ __html: service.excerpt.rendered }} 
+                  className="text-text/70 mt-4"
+                />
+                <span className="text-accent hover:text-primary mt-6 inline-block font-bold">
+                  اطلاعات بیشتر &larr;
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+      
+      {/* --- LATEST POSTS SECTION --- */}
+      <section className="py-16 sm:py-24">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold text-text font-secondary mb-12">
+            {postsTitle}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {latestPosts.map((post) => (
+              <Link href={`/posts/${post.slug}`} key={post.id} className="group block p-6 rounded-lg shadow-lg bg-surface border border-text/10 hover:border-accent/50 transition-all duration-300">
+                <h3 className="text-xl font-semibold text-text group-hover:text-accent transition-colors text-right">
+                  {post.title.rendered}
+                </h3>
+                <span className="block text-accent font-medium mt-4 text-right">ادامه مطلب &larr;</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }

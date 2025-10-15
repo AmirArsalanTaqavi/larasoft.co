@@ -1,4 +1,4 @@
-import { getPageBySlug, getPages } from '@/lib/wordpress'; 
+import { getItemBySlug, getPages } from '@/lib/wordpress'; 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import PriceCalculator from '@/components/PriceCalculator';
@@ -6,7 +6,7 @@ import PriceCalculator from '@/components/PriceCalculator';
 // 1. Dynamic Metadata for SEO (FIXED: Destructuring)
 export async function generateMetadata({ params }: { params: { slug: string } }) {
     const { slug } = params; // FIX: Destructuring parameter
-    const service = await getPageBySlug(slug); // Use destructured slug
+    const service = await getItemBySlug(slug, 'pages'); // Use destructured slug
     
     if (!service) {
         return { title: 'Service Not Found | LaraSoft' };
@@ -32,7 +32,7 @@ export default async function SingleServicePage({ params }: { params: { slug: st
     const { slug } = params; // FIX: Destructuring parameter
     
     // Fetch the full content based on the URL slug
-    const service = await getPageBySlug(slug);
+    const service = await getItemBySlug(slug, 'pages');
 
     if (!service) {
         notFound();

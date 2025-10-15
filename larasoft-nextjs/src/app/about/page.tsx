@@ -1,4 +1,4 @@
-import { getPageBySlug, WpPost } from '@/lib/wordpress'; 
+import { getItemBySlug, WpPost } from '@/lib/wordpress'; 
 import { notFound } from 'next/navigation';
 
 // 1. Dynamic Metadata for SEO
@@ -11,7 +11,7 @@ export async function generateMetadata() {
 
 export default async function AboutPage() {
     // Fetch the page content by its clean slug 'about'
-    const aboutContent: WpPost | null = await getPageBySlug('about');
+    const aboutContent: WpPost | null = await getItemBySlug('about', 'pages');
 
     if (!aboutContent) {
         // If content is missing, show 404

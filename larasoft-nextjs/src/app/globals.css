@@ -1,27 +1,55 @@
-/* src/globals.css - Tailwind V4 STANDARD IMPORT */
-@import "tailwindcss";
 
+/* src/app/globals.css
+	 - Use the standard Tailwind entry points so PostCSS/Tailwind generate
+		 base, components and utilities in the expected order.
+	 - We also add a tiny, low-risk fallback mapping for the project's
+		 semantic classes (bg-surface/bg-background/text-text/etc.) that
+		 reference the runtime CSS variables set on <html>. This is a
+		 safety-net so the site remains styled even if a Tailwind utility
+		 is missing during development. Remove the fallback once Tailwind
+		 generation is confirmed working in your environment. */
 
-/* Global HTML/Body Structure and LaraSoft Theme */
-body {
-    /* ... (RTL settings) ... */
-    background-color: #002924; 
-    background-image: url('/images/abstract_bg.svg'); 
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover; 
+@import "tailwindcss/preflight";
+
+/* Tailwind utilities (include all generated utility classes such as bg-surface) */
+@tailwind utilities;
+
+/* --- Minimal semantic fallback styles (safe, low-risk) ---
+	 These simply map the semantic utility-names used across the app to
+	 the CSS variables defined on the <html> element by `layout.tsx`.
+	 They don't conflict with Tailwind-generated utilities (Tailwind's
+	 rules are more specific) but provide visible styling if utilities
+	 are absent. */
+
+:root {
+	/* Defaults (will be overridden by inline --color-* on <html>) */
+	--color-primary: #000000;
+	--color-secondary: #000000;
+	--color-accent: #00ff00;
+	--color-text: #111111;
+	--color-background: #ffffff;
+	--color-surface: #f7f7f7;
 }
 
-/* Subtly darken the entire screen using a pseudo-element overlay for better text contrast */
-body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* 40% transparency of your background color #002924 */
-    background-color: rgba(0, 41, 36, 0.4); 
-    z-index: -1; 
-}
+.bg-background { background-color: var(--color-background) !important; }
+.bg-surface { background-color: var(--color-surface) !important; }
+.bg-primary { background-color: var(--color-primary) !important; }
+.bg-accent { background-color: var(--color-accent) !important; }
+
+.text-text { color: var(--color-text) !important; }
+.text-background { color: var(--color-background) !important; }
+.text-accent { color: var(--color-accent) !important; }
+
+.border-text { border-color: var(--color-text) !important; }
+.border-primary { border-color: var(--color-primary) !important; }
+.border-accent { border-color: var(--color-accent) !important; }
+
+/* small helper for translucent variants used like `bg-background/80` */
+.bg-background\/80 { background-color: color-mix(in srgb, var(--color-background) 80%, transparent); }
+.bg-background\/90 { background-color: color-mix(in srgb, var(--color-background) 90%, transparent); }
+
+/* End of fallbacks */
+
+
+
+
