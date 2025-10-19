@@ -38,7 +38,7 @@ export default async function HomePage() {
       >
         <div className="absolute inset-0 bg-background/80"></div>
         <div className="relative z-10">
-          <h1 className="text-5xl md:text-7xl font-bold text-text leading-tight font-secondary">
+          <h1 className="text-5xl md:text-7xl leading-tight font-larasoft text-accent-500">
             {heroTitle}
           </h1>
           <p className="mt-4 text-xl text-text/80 max-w-3xl mx-auto">
@@ -58,13 +58,13 @@ export default async function HomePage() {
       {/* --- SERVICES SECTION --- */}
       <section className="py-16 sm:py-24 bg-surface">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-text font-secondary mb-12">
+          <h2 className="text-4xl font-bold text-text mb-12">
             {servicesTitle}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service) => (
-              <Link href={`/services/${service.slug}`} key={service.id} className="group block p-8 border border-text/10 shadow-lg text-center bg-background rounded-lg hover:bg-primary/10 hover:shadow-accent/20 transition-all duration-300">
-                <h3 className="text-2xl font-bold text-primary font-secondary group-hover:text-accent transition-colors">
+              <Link href={`/services/${service.slug}`} key={service.id} className="group block p-8 border border-text/10 shadow-lg text-center bg-background rounded-lg hover:bg-primary/10 hover:shadow-accent/20 transition-all duration-300 bg-secondary-500">
+                <h3 className="text-2xl font-bold text-primary group-hover:text-accent-500 transition-colors">
                   {service.title.rendered}
                 </h3>
                 <div 
@@ -83,7 +83,7 @@ export default async function HomePage() {
       {/* --- LATEST POSTS SECTION --- */}
       <section className="py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-text font-secondary mb-12">
+          <h2 className="text-4xl font-bold text-text mb-12">
             {postsTitle}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

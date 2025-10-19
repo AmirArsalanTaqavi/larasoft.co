@@ -93,7 +93,7 @@ const formatToToman = (tomanAmount: number) => {
 
 // --- PRICE LOGIC TABLE COMPONENT ---
 const PricingLogicTable = () => (
-    <div className="bg-background p-6 rounded-xl border border-primary mt-8">
+    <div className="bg-secondary-500 p-6 rounded-xl border border-primary mt-8">
         <h3 className="text-xl font-bold text-primary mb-4 border-b border-secondary pb-2">
             جدول محاسبه هزینه پایه (Tiering)
         </h3>

@@ -1,55 +1,80 @@
+/* src/app/globals.css */
+@import "tailwindcss";
 
-/* src/app/globals.css
-	 - Use the standard Tailwind entry points so PostCSS/Tailwind generate
-		 base, components and utilities in the expected order.
-	 - We also add a tiny, low-risk fallback mapping for the project's
-		 semantic classes (bg-surface/bg-background/text-text/etc.) that
-		 reference the runtime CSS variables set on <html>. This is a
-		 safety-net so the site remains styled even if a Tailwind utility
-		 is missing during development. Remove the fallback once Tailwind
-		 generation is confirmed working in your environment. */
+/* All other styles will be handled by our dynamic theme in layout.tsx */
 
-@import "tailwindcss/preflight";
-
-/* Tailwind utilities (include all generated utility classes such as bg-surface) */
-@tailwind utilities;
-
-/* --- Minimal semantic fallback styles (safe, low-risk) ---
-	 These simply map the semantic utility-names used across the app to
-	 the CSS variables defined on the <html> element by `layout.tsx`.
-	 They don't conflict with Tailwind-generated utilities (Tailwind's
-	 rules are more specific) but provide visible styling if utilities
-	 are absent. */
-
-:root {
-	/* Defaults (will be overridden by inline --color-* on <html>) */
-	--color-primary: #000000;
-	--color-secondary: #000000;
-	--color-accent: #00ff00;
-	--color-text: #111111;
-	--color-background: #ffffff;
-	--color-surface: #f7f7f7;
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('../assets/fonts/vazirmatn/Vazirmatn[wght].woff2') format('woff2 supports variations'),
+       url('../assets/fonts/vazirmatn/Vazirmatn[wght].woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
 }
 
-.bg-background { background-color: var(--color-background) !important; }
-.bg-surface { background-color: var(--color-surface) !important; }
-.bg-primary { background-color: var(--color-primary) !important; }
-.bg-accent { background-color: var(--color-accent) !important; }
+@font-face {
+  font-family: 'Delnia';
+  src: url('../assets/fonts/Delnia/Delnia.woff2') format('woff2');
 
-.text-text { color: var(--color-text) !important; }
-.text-background { color: var(--color-background) !important; }
-.text-accent { color: var(--color-accent) !important; }
+}
 
-.border-text { border-color: var(--color-text) !important; }
-.border-primary { border-color: var(--color-primary) !important; }
-.border-accent { border-color: var(--color-accent) !important; }
+@theme {
+  --font-vazirmatn: 'Vazirmatn', sans-serif ;
+  --font-larasoft: 'Delnia', serif ;
 
-/* small helper for translucent variants used like `bg-background/80` */
-.bg-background\/80 { background-color: color-mix(in srgb, var(--color-background) 80%, transparent); }
-.bg-background\/90 { background-color: color-mix(in srgb, var(--color-background) 90%, transparent); }
-
-/* End of fallbacks */
-
-
-
-
+  --color-primary-50: #9efff3;
+  --color-primary-100: #00f7e5;
+  --color-primary-200: #00cfc0;
+  --color-primary-300: #00ab9e;
+  --color-primary-400: #00897e;
+  --color-primary-500: #00665e;
+  --color-primary-600: #00534c;
+  --color-primary-700: #003f39;
+  --color-primary-800: #002b27;
+  --color-primary-900: #001c19;
+  --color-primary-950: #00110f;
+  --color-secondary-50: #f8e7ea;
+  --color-secondary-100: #f1cfd5;
+  --color-secondary-200: #e69cac;
+  --color-secondary-300: #dd6383;
+  --color-secondary-400: #b14060;
+  --color-secondary-500: #7b2a41;
+  --color-secondary-600: #652134;
+  --color-secondary-700: #501828;
+  --color-secondary-800: #3c101c;
+  --color-secondary-900: #280811;
+  --color-secondary-950: #1a0409;
+  --color-accent-50: #f7ffbb;
+  --color-accent-100: #f3ff8a;
+  --color-accent-200: #e9f900;
+  --color-accent-300: #deed00;
+  --color-accent-400: #d6e400;
+  --color-accent-500: #cedc00;
+  --color-accent-600: #a0ab00;
+  --color-accent-700: #757d00;
+  --color-accent-800: #4e5400;
+  --color-accent-900: #292c00;
+  --color-accent-950: #171900;
+  --color-background-50: #42ffe8;
+  --color-background-100: #00e8d1;
+  --color-background-200: #00b4a2;
+  --color-background-300: #008073;
+  --color-background-400: #00534a;
+  --color-background-500: #002924;
+  --color-background-600: #00221e;
+  --color-background-700: #001c18;
+  --color-background-800: #001714;
+  --color-background-900: #000e0b;
+  --color-background-950: #000504;
+  --color-text-50: #ffffff;
+  --color-text-100: #f9fdfc;
+  --color-text-200: #f4fbfa;
+  --color-text-300: #eef9f7;
+  --color-text-400: #e8f7f4;
+  --color-text-500: #e3f5f2;
+  --color-text-600: #a2c2bd;
+  --color-text-700: #768e8a;
+  --color-text-800: #4d5d5a;
+  --color-text-900: #27302f;
+  --color-text-950: #161d1c;
+}

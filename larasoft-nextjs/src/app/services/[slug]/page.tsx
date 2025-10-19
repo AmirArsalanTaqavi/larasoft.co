@@ -45,7 +45,7 @@ export default async function SingleServicePage({ params }: { params: { slug: st
         <main className="p-10"> 
 
             {/* 🎯 Section A: Main Service Content (Always displayed) 🎯 */}
-            <article className="max-w-5xl mx-auto bg-background/90 p-12 rounded-xl shadow-2xl relative z-20"> 
+            <article className="max-w-5xl mx-auto bg-background/90 p-12 rounded-xl shadow-2xl relative z-20 bg-secondary-500"> 
                 
                 <h1 className="text-4xl font-extrabold text-primary mb-6">
                     خدمات: {service.title.rendered}
