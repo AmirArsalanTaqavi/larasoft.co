@@ -19,7 +19,7 @@ export default async function AboutPage() {
     }
 
     return (
-        <main className="min-h-screen p-10 max-w-5xl mx-auto bg-gray-50">
+        <main className="min-h-screen p-10 max-w-5xl mx-auto bg-gray-50 pt-26">
             
             {/* Display static content */}
             <h1 className="text-4xl font-extrabold text-indigo-700 mb-6 text-center">

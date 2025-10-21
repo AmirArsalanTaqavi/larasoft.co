@@ -1,13 +1,13 @@
 // src/app/page.tsx
 
-import { getItemBySlug, getPages, getAcfOptions, getPosts } from '@/lib/wordpress';
+import { getItemBySlug, getPages, getAcfOptions, getPosts,getServices } from '@/lib/wordpress';
 import Link from 'next/link';
 
 export default async function HomePage() {
   // --- Fetch All Data in Parallel ---
   const [homepageContent, services, siteOptions, latestPosts] = await Promise.all([
     getItemBySlug('home', 'pages'),
-    getPages(),
+    getServices(),
     getAcfOptions(),
     getPosts() // Fetching the latest posts
   ]);
@@ -67,8 +67,8 @@ export default async function HomePage() {
                 <h3 className="text-2xl font-bold text-primary group-hover:text-accent-500 transition-colors">
                   {service.title.rendered}
                 </h3>
-                <div 
-                  dangerouslySetInnerHTML={{ __html: service.excerpt.rendered }} 
+                  <div 
+                  dangerouslySetInnerHTML={{ __html: service.excerpt?.rendered ?? '' }} 
                   className="text-text/70 mt-4"
                 />
                 <span className="text-accent hover:text-primary mt-6 inline-block font-bold">

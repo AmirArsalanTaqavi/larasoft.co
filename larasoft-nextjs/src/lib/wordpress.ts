@@ -1,50 +1,33 @@
-// --- INTERFACES ---
+// src/lib/wordpress.ts
 
-// 1. For standard WP settings (Site Title, etc.)
+// --- INTERFACES ---
 export interface WpSettings {
   title: string;
   logoUrl?: string;
 }
 
-// 2. For your custom ACF options page (Colors, Fonts, etc.)
 export interface WpAcfOptions {
-  // Branding
   site_logo?: { url: string; alt: string };
-  site_logo_dark?: { url: string; alt: string };
   favicon?: { url: string; alt: string };
-
-  // Colors
   color_primary?: string;
   color_secondary?: string;
   color_accent?: string;
   color_text?: string;
   color_background?: string;
   color_surface?: string;
-
-  // Typography
-  primary_font_url?: string;
-  primary_font_family?: string;
-  secondary_font_url?: string;
-  secondary_font_family?: string;
-
-  // General
   hero_background_image?: { url: string; alt: string };
-
-  // Footer
   copyright_text?: string;
 }
 
-// 3. For a single Post or Page
 export interface WpPost {
     id: number;
     slug: string;
     title: { rendered: string };
     excerpt: { rendered: string };
     content: { rendered: string };
-    acf?: WpPostAcf; // Add this line for ACF fields with a stronger type
+    acf?: WpPostAcf;
 }
 
-// Specific ACF shape for posts/pages that we use in the app
 export interface WpPostAcf {
   hero_title?: string;
   hero_subtitle?: string;
@@ -52,62 +35,25 @@ export interface WpPostAcf {
   hero_button_link?: string;
   services_section_title?: string;
   posts_section_title?: string;
-  hero_background_image?: { url: string; alt?: string };
   [key: string]: Record<string, unknown> | string | number | boolean | null | undefined;
 }
 
-// 4. For a single Menu Item
 export interface WpMenuItem {
-  ID: number;
+  ID: number; // We will ensure this exists
+  id: number;
   title: string;
   url: string;
   children?: WpMenuItem[];
 }
 
-
 // --- FETCH FUNCTIONS ---
 
-/**
- * Fetches the standard WordPress site settings (title and logo).
- */
-export async function getSiteSettings(): Promise<WpSettings> {
-  const apiURL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
-  if (!apiURL) return { title: 'LaraSoft' }; // Fallback
+const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
 
-  try {
-    const settingsRes = await fetch(`${apiURL}/wp/v2/settings`, { next: { revalidate: 3600 } });
-    if (!settingsRes.ok) return { title: 'LaraSoft' };
-    
-    const settings = await settingsRes.json();
-    let logoUrl;
-
-    if (settings.site_logo) {
-      const mediaRes = await fetch(`${apiURL}/wp/v2/media/${settings.site_logo}`, { next: { revalidate: 3600 } });
-      if (mediaRes.ok) {
-        const media = await mediaRes.json();
-        logoUrl = media.source_url;
-      }
-    }
-
-    return {
-      title: settings.title,
-      logoUrl: logoUrl,
-    };
-  } catch (error) {
-    console.error('Fetch error in getSiteSettings:', error);
-    return { title: 'LaraSoft' };
-  }
-}
-
-/**
- * Fetches all custom fields from your ACF Options Page.
- */
 export async function getAcfOptions(): Promise<WpAcfOptions | null> {
-  const apiURL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
-  if (!apiURL) return null;
-
+  if (!API_URL) return null;
   try {
-    const res = await fetch(`${apiURL}/acf/v3/options/options`, {
+    const res = await fetch(`${API_URL}/acf/v3/options/options`, {
       next: { revalidate: 60 }
     });
     if (!res.ok) return null;
@@ -120,34 +66,69 @@ export async function getAcfOptions(): Promise<WpAcfOptions | null> {
 }
 
 /**
- * Fetches items from the menu plugin.
+ * Helper function to recursively fix item keys (id -> ID)
+ * This fixes the React "key" prop warning.
  */
-export async function getMenuItems(location: string): Promise<WpMenuItem[]> {
-  const apiURL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
-  if (!apiURL) return [];
+function mapMenuItems(items: any[]): WpMenuItem[] {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+  return items.map((item: any) => ({
+    ...item,
+    ID: item.id || item.ID, // Ensure 'ID' exists for React keys
+    // Recursively map children as well
+    children: item.children ? mapMenuItems(item.children) : [],
+  }));
+}
+
+/**
+ * Fetches menu items by the menu's ID.
+ * This is YOUR updated, correct function.
+ */
+export async function getMenuItems(menuId: number): Promise<WpMenuItem[]> {
+  if (!API_URL) {
+    console.error("Missing NEXT_PUBLIC_WORDPRESS_API_URL environment variable.");
+    return [];
+  }
 
   try {
-    const res = await fetch(`${apiURL}/wp-rest-api-menus/v2/menu-locations/${location}`, { next: { revalidate: 3600 } });
-    if (!res.ok) return [];
-    
+    // This is the correct endpoint you found with Postman
+    const res = await fetch(`${API_URL}/wp-api-menus/v2/menus/${menuId}`, {
+      next: { revalidate: 3600 },
+    });
+
+    if (!res.ok) {
+      console.error(`Failed to fetch menu ID: ${menuId}`, await res.text());
+      return [];
+    }
+
     const menu = await res.json();
-    return menu.items || [];
+
+    if (!menu || !Array.isArray(menu.items)) {
+      console.warn(`Menu ${menuId} has no items or invalid format.`);
+      return [];
+    }
+
+    // Use the recursive helper to fix keys for all items and children
+    return mapMenuItems(menu.items);
+
   } catch (error) {
-    console.error(`Fetch error in getMenuItems for ${location}:`, error);
+    console.error(`Error fetching menu ID ${menuId}:`, error);
     return [];
   }
 }
 
 /**
- * Fetches a list of posts or pages.
+ * Fetches a list of posts, pages, or services.
  */
 async function fetchWp<T>(endpoint: string, revalidate: number): Promise<T[]> {
-  const apiURL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
-  if (!apiURL) return [];
-
+  if (!API_URL) return [];
   try {
-    const res = await fetch(`${apiURL}/wp/v2/${endpoint}`, { next: { revalidate } });
-    if (!res.ok) return [];
+    const res = await fetch(`${API_URL}/wp/v2/${endpoint}`, { next: { revalidate } });
+    if (!res.ok) {
+      console.error(`Fetch failed for endpoint: ${endpoint}`, await res.text());
+      return [];
+    }
     return res.json() as Promise<T[]>;
   } catch (error) {
     console.error(`Fetch error for ${endpoint}:`, error);
@@ -156,14 +137,28 @@ async function fetchWp<T>(endpoint: string, revalidate: number): Promise<T[]> {
 }
 
 export async function getPosts(): Promise<WpPost[]> {
-  return fetchWp<WpPost>('posts?_embed&per_page=6', 60);
+  // Fetches all posts, not just 6
+  return fetchWp<WpPost>('posts?_embed&per_page=100', 60);
 }
 
 export async function getPages(): Promise<WpPost[]> {
   return fetchWp<WpPost>('pages?_embed&per_page=10', 3600);
 }
 
-export async function getItemBySlug(slug: string, type: 'posts' | 'pages'): Promise<WpPost | null> {
+/**
+ * FIX for page crashes: This function now exists.
+ */
+export async function getServices(): Promise<WpPost[]> {
+  return fetchWp<WpPost>('services?_embed&per_page=10', 3600);
+}
+
+/**
+ * FIX for page crashes: This function now accepts 'services'.
+ */
+export async function getItemBySlug(
+  slug: string, 
+  type: 'posts' | 'pages' | 'services' 
+): Promise<WpPost | null> {
   const items = await fetchWp<WpPost>(`${type}?slug=${slug}&_embed`, type === 'posts' ? 60 : 3600);
   return items[0] || null;
 }

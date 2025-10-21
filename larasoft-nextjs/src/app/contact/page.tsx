@@ -15,7 +15,7 @@ export default async function ContactPage() {
   }
 
   return (
-    <main className="container mx-auto px-4 pt-28 pb-12">
+    <main className="container mx-auto px-4 pt-26 pb-12">
       <div className="max-w-3xl mx-auto text-center">
         <h1 
           className="text-4xl md:text-5xl font-extrabold mb-4 text-text"

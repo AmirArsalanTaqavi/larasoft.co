@@ -6,8 +6,6 @@ import { getAcfOptions } from '@/lib/wordpress';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 
-// We only need delnia from the local fonts now
-
 export default async function RootLayout({
   children,
 }: {
@@ -25,7 +23,6 @@ export default async function RootLayout({
   } as React.CSSProperties;
 
   return (
-    // We only need the delnia variable now
     <html 
       lang="fa" 
       dir="rtl" 
@@ -37,7 +34,7 @@ export default async function RootLayout({
       
       <body>
         <Header />
-        <main className="pt-20">
+        <main>
           {children}
         </main>
         <Footer />
