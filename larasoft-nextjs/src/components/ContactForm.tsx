@@ -1,8 +1,14 @@
-'use client'; // This must be a Client Component to handle state and interactivity
+// src/components/ContactForm.tsx
+'use client';
 
 import React, { useState } from 'react';
-// We will define this server-side action later
-import { sendContactForm } from '@/app/actions/index'; 
+import { sendContactForm } from '@/app/actions/index';
+
+// Shadcn UI Components
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface FormData {
   name: string;
@@ -11,7 +17,11 @@ interface FormData {
 }
 
 export default function ContactForm() {
-  const [formData, setFormData] = useState<FormData>({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    message: '',
+  });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -24,12 +34,11 @@ export default function ContactForm() {
     setStatus('loading');
     setErrorMessage(null);
 
-    // Call the Server Action
     const result = await sendContactForm(formData);
 
     if (result.success) {
       setStatus('success');
-      setFormData({ name: '', email: '', message: '' }); // Clear form
+      setFormData({ name: '', email: '', message: '' });
     } else {
       setStatus('error');
       setErrorMessage(result.message || 'خطایی در ارسال پیام رخ داد.');
@@ -37,66 +46,72 @@ export default function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 text-right">
-      {/* Name Field */}
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">نام</label>
-        <input
+    <form
+      onSubmit={handleSubmit}
+      className="
+        max-w-xl mx-auto mt-12 p-8 rounded-2xl shadow-lg
+        bg-card text-foreground border border-border
+        space-y-6 text-right
+      "
+      dir="rtl"
+    >
+      <div className="space-y-2">
+        <Label htmlFor="name">نام</Label>
+        <Input
           type="text"
           id="name"
           name="name"
           required
           value={formData.name}
           onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
           disabled={status === 'loading'}
+          className="text-right"
         />
       </div>
 
-      {/* Email Field */}
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">ایمیل</label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="email">ایمیل</Label>
+        <Input
           type="email"
           id="email"
           name="email"
           required
           value={formData.email}
           onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
           disabled={status === 'loading'}
+          className="text-right"
         />
       </div>
 
-      {/* Message Field */}
-      <div>
-        <label htmlFor="message" className="block text-sm font-medium text-gray-700">متن پیام</label>
-        <textarea
+      <div className="space-y-2">
+        <Label htmlFor="message">متن پیام</Label>
+        <Textarea
           id="message"
           name="message"
           rows={4}
           required
           value={formData.message}
           onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
           disabled={status === 'loading'}
+          className="text-right"
         />
       </div>
 
-      {/* Submission Button and Status */}
-      <div className="flex items-center justify-end space-x-4">
-        <button
+      <div className="flex items-center justify-end gap-4">
+        <Button
           type="submit"
-          className={`px-4 py-2 text-white font-bold rounded-md transition-colors ${
-            status === 'loading' ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'
-          }`}
           disabled={status === 'loading'}
         >
           {status === 'loading' ? 'در حال ارسال...' : 'ارسال پیام'}
-        </button>
-        
-        {status === 'success' && <p className="text-green-600">پیام با موفقیت ارسال شد!</p>}
-        {status === 'error' && <p className="text-red-600">{errorMessage}</p>}
+        </Button>
+
+        {status === 'success' && (
+          <p className="text-sm text-green-500 transition-opacity">پیام با موفقیت ارسال شد!</p>
+        )}
+
+        {status === 'error' && (
+          <p className="text-sm text-red-500 transition-opacity">{errorMessage}</p>
+        )}
       </div>
     </form>
   );

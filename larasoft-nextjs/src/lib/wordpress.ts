@@ -16,6 +16,7 @@ export interface WpAcfOptions {
   color_background?: string;
   color_surface?: string;
   hero_background_image?: { url: string; alt: string };
+  background_image?: { url: string; alt: string };
   copyright_text?: string;
 }
 
@@ -26,6 +27,15 @@ export interface WpPost {
     excerpt: { rendered: string };
     content: { rendered: string };
     acf?: WpPostAcf;
+
+    yoast_head_json?: {
+      title: string;
+      description?: string;
+      og_title?: string;
+      og_description?: string;
+      og_image?: { url: string }[];
+      // ... add other yoast fields as needed
+    };
 }
 
 export interface WpPostAcf {

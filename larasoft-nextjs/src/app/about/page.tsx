@@ -1,36 +1,62 @@
-import { getItemBySlug, WpPost } from '@/lib/wordpress'; 
-import { notFound } from 'next/navigation';
+// src/app/about/page.tsx
 
-// 1. Dynamic Metadata for SEO
-export async function generateMetadata() {
-    return {
-        title: 'درباره ما | LaraSoft',
-        description: 'بنیانگذار و خدمات تخصصی لارا سافت'
-    };
+import { getItemBySlug, WpPostAcf } from '@/lib/wordpress';
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+
+// 1. Generate SEO Metadata for this specific page
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getItemBySlug('about', 'pages');
+
+  if (!page) {
+    return { title: 'Page Not Found' };
+  }
+  
+  // Use Yoast data if available, otherwise fall back
+  const title = page.yoast_head_json?.title ?? page.title.rendered;
+  const description = page.yoast_head_json?.description ?? '';
+
+  return {
+    title: title,
+    description: description,
+    openGraph: {
+      title: page.yoast_head_json?.og_title ?? title,
+      description: page.yoast_head_json?.og_description ?? description,
+      images: page.yoast_head_json?.og_image?.map((img) => img.url) ?? [],
+    },
+  };
 }
 
+// 2. The About Page Component
 export default async function AboutPage() {
-    // Fetch the page content by its clean slug 'about'
-    const aboutContent: WpPost | null = await getItemBySlug('about', 'pages');
+  // Fetch the page content
+  const page = await getItemBySlug('about', 'pages');
 
-    if (!aboutContent) {
-        // If content is missing, show 404
-        notFound();
-    }
+  if (!page || !page.acf) {
+    notFound();
+  }
 
-    return (
-        <main className="min-h-screen p-10 max-w-5xl mx-auto bg-gray-50 pt-26">
-            
-            {/* Display static content */}
-            <h1 className="text-4xl font-extrabold text-indigo-700 mb-6 text-center">
-                {aboutContent.title.rendered}
-            </h1>
-            
-            <div 
-                className="prose prose-lg mx-auto mb-10 text-gray-700 mt-8 p-8 bg-white rounded-xl shadow-lg"
-                dangerouslySetInnerHTML={{ __html: aboutContent.content.rendered }}
-            />
-            
-        </main>
-    );
+  // Get ACF fields
+  const acf = page.acf as WpPostAcf;
+
+  const headline = acf.page_headline as string || page.title.rendered;
+  const content = acf.page_content as string || '';
+
+  return (
+    <main className="container mx-auto p-8 pt-24">
+      <article className="max-w-4xl mx-auto bg-surface p-10 rounded-lg shadow-lg">
+        
+        <h1 className="text-4xl font-larasoft text-primary mb-8 text-center">
+          {headline}
+        </h1>
+        
+        {/* Render the WYSIWYG content */}
+        <div 
+          className="prose prose-lg max-w-none text-text mt-8"
+          dangerouslySetInnerHTML={{ __html: content }} 
+        />
+        
+      </article>
+    </main>
+  );
 }

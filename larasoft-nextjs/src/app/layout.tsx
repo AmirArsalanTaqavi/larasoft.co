@@ -6,6 +6,21 @@ import { getAcfOptions } from '@/lib/wordpress';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+import { ThemeProvider } from '@/components/ThemeProvider';
+
+const vazirmatn = localFont({
+  src: '../assets/fonts/vazirmatn/Vazirmatn[wght].woff2',
+  display: 'swap',
+  variable: '--font-vazirmatn',
+  weight: '100 900',
+});
+
+const larasoftFont = localFont({
+  src: '../assets/fonts/Delnia/Delnia.woff2',
+  display: 'swap',
+  variable: '--font-larasoft',
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteOptions = await getAcfOptions();
@@ -42,31 +57,47 @@ export default async function RootLayout({
 }) {
   const siteOptions = await getAcfOptions();
 
-  const colorVariables = {
-    '--color-primary': siteOptions?.color_primary || '#007BFF',
-    '--color-secondary': siteOptions?.color_secondary || '#6C757D',
-    '--color-accent': siteOptions?.color_accent || '#17A2B8',
-    '--color-text': siteOptions?.color_text || '#F8F9FA',
-    '--color-background': siteOptions?.color_background || '#002924',
-    '--color-surface': siteOptions?.color_surface || '#003a34',
-  } as React.CSSProperties;
+  // THIS IS THE BIG CHANGE:
+  // We NO LONGER need the 'colorVariables' object.
+  // The colors are now hardcoded in globals.css.
+  // We only need the body background image.
+  
+  const globalBgUrl = siteOptions?.background_image?.url;
+  const bodyStyles: React.CSSProperties = {};
+  if (globalBgUrl) {
+    bodyStyles.backgroundImage = `url(${globalBgUrl})`;
+    bodyStyles.backgroundSize = 'cover';
+    bodyStyles.backgroundAttachment = 'fixed';
+    bodyStyles.backgroundPosition = 'center';
+    bodyStyles.backgroundRepeat = 'no-repeat';
+  }
 
   return (
     <html 
       lang="fa" 
       dir="rtl" 
-      className={`font-vazirmatn`} style={colorVariables}
+      // We removed the 'style={colorVariables}'
+      className={`${vazirmatn.variable} ${larasoftFont.variable} font-vazirmatn`}
+      suppressHydrationWarning // This is required
     >
       <head>
         {siteOptions?.favicon?.url && <link rel="icon" href={siteOptions.favicon.url} sizes="any" />}
       </head>
       
-      <body>
-        <Header />
-        <main>
-          {children}
-        </main>
-        <Footer />
+      <body style={bodyStyles}>
+        {/* 9. THE FIX: Wrap everything in ThemeProvider */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <Header />
+          <main>
+            {children}
+          </main>
+          <Footer />
+        </ThemeProvider> 
       </body>
     </html>
   );
