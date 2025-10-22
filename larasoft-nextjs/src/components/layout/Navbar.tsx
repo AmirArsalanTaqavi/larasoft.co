@@ -54,7 +54,7 @@ export default function Navbar({ menuItems, siteOptions }: NavbarProps) {
   return (
     <>
       {/* Sizing is set by py-2.5 (10px) + h-8 (32px logo) = 52px total height */}
-      <nav className="w-full flex justify-between items-center px-6 py-2.5" aria-label="Global">
+      <nav className="w-full flex justify-between items-center px-4 py-2.5" aria-label="Global">
         
         {/* 1. LOGO (Cleaned up) */}
         <div className="flex-shrink-0">
@@ -66,7 +66,7 @@ export default function Navbar({ menuItems, siteOptions }: NavbarProps) {
                 width={112}
                 height={32}
                 priority
-                className="h-8 w-auto" // 32px height
+                className="h-10 w-auto pr-2" // 32px height
               />
             ) : (
               <span className="text-2xl font-larasoft tracking-wider">LaraSoft</span>
@@ -195,23 +195,10 @@ export default function Navbar({ menuItems, siteOptions }: NavbarProps) {
         <div className="fixed inset-0 z-50" />
         
         {/* Floating panel, not full-width, with blur and background */}
-        <Dialog.Panel className="fixed inset-x-4 top-20 z-50 rounded-2xl bg-surface-500/90 backdrop-blur-lg p-6 shadow-xl ring-1 ring-white/10">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="-m-1.5 p-1.5" onClick={() => setMobileMenuOpen(false)}>
-              <span className="sr-only">LaraSoft</span>
-              {siteOptions?.site_logo?.url ? (
-                <Image
-                  src={siteOptions.site_logo.url}
-                  alt={siteOptions.site_logo.alt || 'LaraSoft Logo'}
-                  width={112}
-                  height={32}
-                  priority
-                  className="h-8 w-auto"
-                />
-              ) : (
-                <span className="text-2xl font-larasoft tracking-wider text-accent-500">LaraSoft</span>
-              )}
-            </Link>
+        <Dialog.Panel className="fixed inset-x-4 top-20 z-50 rounded-2xl bg-background-500/90 backdrop-blur-lg p-6 shadow-xl ring-1 ring-white/10">
+          
+          {/* --- FIX: Removed logo, aligned close button to the right --- */}
+          <div className="flex justify-end">
             <button
               type="button"
               className="-m-2.5 rounded-md p-2.5 text-text-500"

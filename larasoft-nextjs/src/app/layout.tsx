@@ -5,6 +5,35 @@ import './globals.css';
 import { getAcfOptions } from '@/lib/wordpress';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import type { Metadata } from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const siteOptions = await getAcfOptions();
+
+  const siteTitle = 'لاراسافت'; // Fallback
+  const siteDesc = 'LaraSoft IT Solutions'; // Fallback
+  const siteLogo = siteOptions?.site_logo?.url || '';
+
+  return {
+    title: {
+      default: siteTitle,
+      template: `%s | ${siteTitle}`,
+    },
+    description: siteDesc,
+    openGraph: {
+      title: siteTitle,
+      description: siteDesc,
+      images: [
+        {
+          url: siteLogo,
+          width: 112,
+          height: 32,
+        },
+      ],
+      type: 'website',
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
