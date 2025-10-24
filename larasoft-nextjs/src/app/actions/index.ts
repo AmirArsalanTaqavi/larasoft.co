@@ -89,7 +89,7 @@ export async function sendQuoteRequest(data: LeadData) {
         <h3>جزئیات تخمین هزینه (پس از ۲۰٪ تخفیف سال اول):</h3>
         <p><strong>قیمت نهایی ماهانه:</strong> ${data.quoteSummary} تومان</p>
         <p><strong>تجهیزات وارد شده:</strong></p>
-        <pre style="background: #eee; padding: 10px; border-radius: 5px; direction: rtl; text-align: right;">${data.quoteInputs}</pre>
+        <pre style="background: #eee; padding: 10px; border-radius: 5px;">${data.quoteInputs}</pre>
       `,
     });
 

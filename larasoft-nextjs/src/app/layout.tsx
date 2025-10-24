@@ -78,7 +78,7 @@ export default async function RootLayout({
       dir="rtl" 
       // We removed the 'style={colorVariables}'
       className={`${vazirmatn.variable} ${larasoftFont.variable} font-vazirmatn`}
-      suppressHydrationWarning // This is required
+      suppressHydrationWarning
     >
       <head>
         {siteOptions?.favicon?.url && <link rel="icon" href={siteOptions.favicon.url} sizes="any" />}

@@ -43,10 +43,10 @@ export default async function AboutPage() {
   const content = acf.page_content as string || '';
 
   return (
-    <main className="container mx-auto p-8 pt-24">
-      <article className="max-w-4xl mx-auto bg-surface p-10 rounded-lg shadow-lg">
+    <main className="p-10 pt-26"> 
+        <article className="max-w-5xl mx-auto bg-accent p-12 rounded-xl shadow-2xl relative z-20"> 
         
-        <h1 className="text-4xl font-larasoft text-primary mb-8 text-center">
+        <h1 className="text-6xl font-larasoft text-primary mb-8 text-center">
           {headline}
         </h1>
         

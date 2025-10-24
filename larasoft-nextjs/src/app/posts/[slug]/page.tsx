@@ -23,14 +23,15 @@ export default async function PostPage({ params }: { params: { slug: string } })
   }
 
   return (
+    <main className="p-10 pt-26"> 
+      <article className="max-w-5xl mx-auto bg-accent p-12 rounded-xl shadow-2xl relative z-20"> 
+        {/* Post Title */}
+          <h1 
+            className="text-4xl md:text-6xl font-larasoft text-primary mb-8"
+            dangerouslySetInnerHTML={{ __html: post.title.rendered }} 
+          />
+      </article>
     <article className="max-w-4xl mx-auto py-12 px-4 prose prose-invert prose-lg pt-26">
-      
-      {/* Post Title */}
-      <h1 
-        className="text-4xl md:text-5xl font-larasoft text-accent mb-8"
-        dangerouslySetInnerHTML={{ __html: post.title.rendered }} 
-      />
-
       {/* Post Content */}
       <div 
         className="text-text/90"
@@ -38,5 +39,6 @@ export default async function PostPage({ params }: { params: { slug: string } })
       />
 
     </article>
+    </main>
   );
 }

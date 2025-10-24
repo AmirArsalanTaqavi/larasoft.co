@@ -8,18 +8,21 @@ export default async function BlogIndexPage() {
   const posts = await getPosts(); 
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4 pt-26">
-      <h1 className="text-5xl font-larasoft text-accent mb-12 text-center">
-        Blog & A-ha! Moments
+    <main className="p-10 pt-26"> 
+      <article className="max-w-5xl mx-auto bg-accent p-12 rounded-xl shadow-2xl relative z-20"> 
+        {/* Post Title */}
+          <h1 className="text-6xl font-larasoft text-primary mb-8 text-center">
+        مقالات
       </h1>
-
+      </article>
+    <div className="max-w-4xl mx-auto py-12 px-4">
       <div className="grid grid-cols-1 gap-8">
         {posts.length > 0 ? (
           posts.map((post) => (
             <Link 
               href={`/posts/${post.slug}`} 
               key={post.id} 
-              className="group block p-6 rounded-lg shadow-lg bg-surface border border-text/10 hover:border-accent/50 transition-all duration-300"
+              className="group block p-6 rounded-lg shadow-lg bg-primary border hover:bg-secondary transition-all duration-300"
             >
               <h3 
                 className="text-2xl font-bold text-text group-hover:text-accent transition-colors text-right"
@@ -39,5 +42,6 @@ export default async function BlogIndexPage() {
         )}
       </div>
     </div>
+    </main>
   );
 }

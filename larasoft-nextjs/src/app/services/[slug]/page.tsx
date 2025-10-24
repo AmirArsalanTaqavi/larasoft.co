@@ -57,12 +57,11 @@ export default async function SingleServicePage({ params }: { params: { slug: st
         <main className="p-10 pt-26"> 
 
             {/* 🎯 Section A: Main Service Content (Always displayed) 🎯 */}
-            <article className="max-w-5xl mx-auto bg-background/90 p-12 rounded-xl shadow-2xl relative z-20 bg-accent-500"> 
+            <article className="max-w-5xl mx-auto bg-accent p-12 rounded-xl shadow-2xl relative z-20 bg-accent-500"> 
                 
-                <h1 className="text-4xl font-extrabold text-primary mb-6">
+                <h1 className="text-4xl md:text-6xl font-larasoft text-primary mb-8">
                     خدمات: {service.title.rendered}
                 </h1>
-                
                 <div 
                     className="prose prose-lg max-w-none text-text mt-8"
                     dangerouslySetInnerHTML={{ __html: service.content.rendered }} 

@@ -15,19 +15,20 @@ export default async function ContactPage() {
   }
 
   return (
-    <main className="container mx-auto px-4 pt-26 pb-12">
+    <main className="p-10 pt-26"> 
+      <article className="max-w-5xl mx-auto bg-accent p-12 rounded-xl shadow-2xl relative z-20"> 
+        {/* Post Title */}
+          <h1 
+            className="text-4xl md:text-6xl font-extrabold mb-8 font-larasoft text-center text-primary"
+            dangerouslySetInnerHTML={{ __html: page.title.rendered }} 
+          />
+      </article>
       <div className="max-w-3xl mx-auto text-center">
-        <h1 
-          className="text-4xl md:text-5xl font-extrabold mb-4 text-text"
-          dangerouslySetInnerHTML={{ __html: page.title.rendered }} 
-        />
-        
         <div 
           className="prose lg:prose-xl mx-auto text-text/80"
           dangerouslySetInnerHTML={{ __html: page.content.rendered }} 
         />
       </div>
-
       <ContactForm />
     </main>
   );

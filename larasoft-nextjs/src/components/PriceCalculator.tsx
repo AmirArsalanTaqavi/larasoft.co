@@ -10,6 +10,26 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+  InputGroupTextarea, 
+} from "@/components/ui/input-group"
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+
 // Define interfaces
 interface PricingInputs {
   clients: number;
@@ -115,7 +135,7 @@ const formatToToman = (tomanAmount: number) => {
 
 // --- PRICE LOGIC TABLE COMPONENT (kept intact visually) ---
 const PricingLogicTable = () => (
-  <div className="bg-secondary-500 p-6 rounded-xl border border-primary mt-8">
+  <div className=" p-6 rounded-xl border mt-8">
     <h3 className="text-xl font-bold text-primary mb-4 border-b border-secondary pb-2">
       جدول محاسبه هزینه پایه (Tiering)
     </h3>
@@ -123,53 +143,53 @@ const PricingLogicTable = () => (
       هزینه پایه ماهانه بر اساس تعداد کاربران (کلاینت‌ها) و سرورهای فیزیکی محاسبه می‌شود.
     </p>
     <div className="overflow-x-auto">
-      <table className="min-w-full table-auto text-sm text-text">
-        <thead className="bg-primary text-background">
-          <tr className="text-center">
-            <th className="py-2 px-4 border border-background">Tier</th>
-            <th className="py-2 px-4 border border-background">تعداد کلاینت‌ها</th>
-            <th className="py-2 px-4 border border-background">تعداد سرورها</th>
-            <th className="py-2 px-4 border border-background">هزینه پایه (تومان)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="bg-secondary text-center">
-            <td className="py-2 px-4 border border-background">۱</td>
-            <td className="py-2 px-4 border border-background">۱ تا ۶</td>
-            <td className="py-2 px-4 border border-background">۰</td>
-            <td className="py-2 px-4 border border-background">۵,۰۰۰,۰۰۰</td>
-          </tr>
-          <tr className="bg-background text-center">
-            <td className="py-2 px-4 border border-background">۲</td>
-            <td className="py-2 px-4 border border-background">۷ تا ۱۲</td>
-            <td className="py-2 px-4 border border-background">۰</td>
-            <td className="py-2 px-4 border border-background">۸,۰۰۰,۰۰۰</td>
-          </tr>
-          <tr className="bg-secondary text-center">
-            <td className="py-2 px-4 border border-background">۳</td>
-            <td className="py-2 px-4 border border-background">۱۳ تا ۱۵</td>
-            <td className="py-2 px-4 border border-background">۲ یا کمتر</td>
-            <td className="py-2 px-4 border border-background">۱۲,۰۰۰,۰۰۰</td>
-          </tr>
-          <tr className="bg-background text-center">
-            <td className="py-2 px-4 border border-background">۴</td>
-            <td className="py-2 px-4 border border-background">۱۶ تا ۴۰</td>
-            <td className="py-2 px-4 border border-background">۳</td>
-            <td className="py-2 px-4 border border-background">۱۸,۰۰۰,۰۰۰</td>
-          </tr>
-          <tr className="bg-secondary text-center">
-            <td className="py-2 px-4 border border-background">۵</td>
-            <td className="py-2 px-4 border border-background">۴۱ تا ۶۴</td>
-            <td className="py-2 px-4 border border-background">۵ یا کمتر</td>
-            <td className="py-2 px-4 border border-background">۲۵,۰۰۰,۰۰۰</td>
-          </tr>
-          <tr className="bg-background text-center">
-            <td className="py-2 px-4 border border-background">۶</td>
-            <td className="py-2 px-4 border border-background">بیشتر از ۶۴</td>
-            <td className="py-2 px-4 border border-background">۵ یا بیشتر</td>
-            <td className="py-2 px-4 border border-background">۳۰,۰۰۰,۰۰۰</td>
-          </tr>
-        </tbody>
+      <table className="min-w-full table-auto text-center">
+        <TableHeader className="">
+          <TableRow>
+            <TableHead>Tier</TableHead>
+            <TableHead>تعداد کلاینت‌ها</TableHead>
+            <TableHead>تعداد سرورها</TableHead>
+            <TableHead>هزینه پایه (تومان)</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell>۱</TableCell>
+            <TableCell>۱ تا ۶</TableCell>
+            <TableCell>۰</TableCell>
+            <TableCell>۵,۰۰۰,۰۰۰</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>۲</TableCell>
+            <TableCell>۷ تا ۱۲</TableCell>
+            <TableCell>۰</TableCell>
+            <TableCell>۸,۰۰۰,۰۰۰</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>۳</TableCell>
+            <TableCell>۱۳ تا ۱۵</TableCell>
+            <TableCell>۲ یا کمتر</TableCell>
+            <TableCell>۱۲,۰۰۰,۰۰۰</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>۴</TableCell>
+            <TableCell>۱۶ تا ۴۰</TableCell>
+            <TableCell>۳</TableCell>
+            <TableCell>۱۸,۰۰۰,۰۰۰</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>۵</TableCell>
+            <TableCell>۴۱ تا ۶۴</TableCell>
+            <TableCell>۵ یا کمتر</TableCell>
+            <TableCell>۲۵,۰۰۰,۰۰۰</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>۶</TableCell>
+            <TableCell>بیشتر از ۶۴</TableCell>
+            <TableCell>۵ یا بیشتر</TableCell>
+            <TableCell>۳۰,۰۰۰,۰۰۰</TableCell>
+          </TableRow>
+        </TableBody>
       </table>
     </div>
   </div>
@@ -192,8 +212,8 @@ const InputField = ({
   unit?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => (
-  <div className="flex justify-between items-start border-primary">
-    <div className="flex text-left items-center">
+  <div className="flex justify-between items-start">
+    <div className="flex items-center">
       <label htmlFor={String(name)} className="text-text font-medium">
         {label}
       </label>
@@ -207,7 +227,7 @@ const InputField = ({
       min={0}
       value={value}
       onChange={onChange}
-      className="w-24 text-center bg-background text-text"
+      className="w-24 text-center"
     />
   </div>
 );
@@ -226,15 +246,16 @@ const CheckboxField = ({
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   return (
-    <div className="flex justify-between items-center p-3 border-b border-primary last:border-b-0">
+    
+      <div className="flex items-center space-x-2">
       <label htmlFor={String(name)} className="text-text font-medium">
         {label}
       </label>
 
-      <div>
         <Checkbox
           id={String(name)}
           checked={checked}
+          className=""
           onCheckedChange={(val) => {
             // synthesize a simple event that your handler expects
             const synthetic = {
@@ -244,7 +265,7 @@ const CheckboxField = ({
           }}
         />
       </div>
-    </div>
+    
   );
 };
 
@@ -337,7 +358,7 @@ export default function PriceCalculator() {
   };
 
   return (
-    <div className="bg-background p-6 rounded-xl shadow-2xl border-t-4 border-primary mt-12">
+    <div className="bg-card p-6 rounded-xl border mt-12">
       <h2 className="text-3xl font-extrabold text-primary text-center mb-6">
         ماشین حساب آنلاین هزینه پشتیبانی
       </h2>
@@ -378,7 +399,7 @@ export default function PriceCalculator() {
         </div>
 
         {/* --- 2. Result Section (Final Price Display & Lead Form) --- */}
-        <div className="lg:col-span-1 p-6 bg-secondary text-text rounded-lg flex flex-col justify-between">
+        <div className="lg:col-span-1 p-6 text-text rounded-lg flex flex-col justify-between">
           <div>
             <h3 className="text-2xl font-semibold mb-3 text-center text-accent">هزینه محاسبه شده (ماهانه)</h3>
 
@@ -396,18 +417,18 @@ export default function PriceCalculator() {
 
             {/* 🎯 The Commitment Checkbox 🎯 */}
             <div className="mt-6 p-4 bg-background rounded-lg border border-primary">
-              <label className="flex items-center cursor-pointer gap-3">
+              <label className="flex items-center cursor-pointer gap-5">
                 <Checkbox id="isCommitted" checked={isCommitted} onCheckedChange={(v) => setIsCommitted(!!v)} />
-                <span className="text-lg font-bold text-accent">تعهد ۲۴ ماهه برای دریافت ۲۰٪ تخفیف</span>
+                <span className=" text-accent">تعهد ۲۴ ماهه برای دریافت ۲۰٪ تخفیف</span>
               </label>
               {isCommitted && <p className="text-xs text-gray-400 mt-2">*قیمت بالا شامل ۲۰٪ تخفیف سال اول است.</p>}
             </div>
+            
           </div>
 
           {/* --- Lead Generation Form --- */}
           <form onSubmit={handleQuoteSubmit} className="mt-6 pt-6 border-t border-primary space-y-3">
             <h4 className="text-lg font-semibold text-text pb-2">درخواست تماس و پیش فاکتور</h4>
-
             <Input
               type="text"
               name="name"
