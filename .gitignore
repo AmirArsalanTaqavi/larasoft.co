@@ -3,3 +3,6 @@ node_modules
 larasoft-theme/
 wp-content-backup/
 wp-content-backup copy/
+.env.local
+.prettierrc
+docker-compose.yml
