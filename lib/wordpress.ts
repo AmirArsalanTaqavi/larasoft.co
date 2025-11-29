@@ -27,7 +27,12 @@ export interface WpPost {
   excerpt: { rendered: string };
   content: { rendered: string };
   acf?: WpPostAcf;
-
+  _embedded?: {
+    'wp:featuredmedia'?: Array<{
+      source_url: string;
+      alt_text: string;
+    }>;
+  };
   yoast_head_json?: {
     title: string;
     description?: string;
@@ -44,6 +49,8 @@ export interface WpPostAcf {
   hero_button_link?: string;
   services_section_title?: string;
   posts_section_title?: string;
+  category?: string;
+  icon?: string; // For services if you add an icon field
   [key: string]:
     | Record<string, unknown>
     | string
@@ -102,7 +109,7 @@ export async function getAcfOptions(): Promise<WpAcfOptions | null> {
   }
 }
 
-// --- MENU ITEMS (recursive key fix) ---
+// --- MENU ITEMS ---
 function mapMenuItems(items: any[]): WpMenuItem[] {
   if (!Array.isArray(items)) return [];
 
@@ -136,7 +143,7 @@ export async function getMenuItems(menuId: number): Promise<WpMenuItem[]> {
 
 // --- POSTS, PAGES, SERVICES ---
 export async function getPosts(): Promise<WpPost[]> {
-  return fetchWp<WpPost>('posts?_embed&per_page=50', 3600);
+  return fetchWp<WpPost>('posts?_embed&per_page=10', 3600); // Increased limit for blog page
 }
 
 export async function getPages(): Promise<WpPost[]> {
@@ -154,15 +161,17 @@ export interface NormalizedService {
   category: string;
   slug: string;
   direction: 'left' | 'right';
+  icon?: string; // Placeholder for future icon logic
 }
 
 export function normalizeServices(services: WpPost[]): NormalizedService[] {
   return services.map((service, index) => ({
     number: (index + 1).toString().padStart(2, '0'),
     title: service.title?.rendered || '',
-    category: String(service.acf?.category ?? ''), // <-- FIX
+    category: String(service.acf?.category ?? 'Service'),
     slug: service.slug || '',
     direction: index % 2 === 0 ? 'left' : 'right',
+    icon: String(service.acf?.icon ?? ''),
   }));
 }
 
@@ -175,19 +184,41 @@ export async function getServiceList(): Promise<NormalizedService[]> {
 export interface NormalizedPost {
   number: string;
   title: string;
+  excerpt: string;
   category: string;
   slug: string;
-  direction: 'left' | 'right';
+  image: string | null; // Added Image field
+  direction: 'left' | 'right' | 'top' | 'bottom';
 }
 
 export function normalizePosts(posts: WpPost[]): NormalizedPost[] {
-  return posts.map((post, index) => ({
-    number: (index + 1).toString().padStart(2, '0'),
-    title: post.title?.rendered || '',
-    category: String(post.acf?.category ?? ''), // <-- FIX
-    slug: post.slug || '',
-    direction: index % 2 === 0 ? 'left' : 'right',
-  }));
+  return posts.map((post, index) => {
+    // Strip HTML tags from excerpt for cleaner UI
+    const rawExcerpt = post.excerpt?.rendered || '';
+    const cleanExcerpt =
+      rawExcerpt.replace(/<[^>]+>/g, '').slice(0, 100) + '...';
+
+    // Extract Featured Image
+    const image = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || null;
+
+    // Assign varying directions for visual interest
+    const directions: Array<'left' | 'right' | 'top' | 'bottom'> = [
+      'top',
+      'right',
+      'left',
+      'bottom',
+    ];
+
+    return {
+      number: (index + 1).toString().padStart(2, '0'),
+      title: post.title?.rendered || '',
+      excerpt: cleanExcerpt,
+      category: String(post.acf?.category ?? 'Blog'),
+      slug: post.slug || '',
+      image,
+      direction: directions[index % 4] || 'top',
+    };
+  });
 }
 
 export async function getPostList(): Promise<NormalizedPost[]> {

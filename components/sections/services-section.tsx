@@ -2,51 +2,18 @@
 
 import { useReveal } from '@/hooks/use-reveal';
 import { MagneticButton } from '../magnetic-button';
-import DotPattern from '../ui/dot-pattern';
-import Link from 'next/link';
 import { NormalizedService } from '@/lib/wordpress';
+import Link from 'next/link';
 
-export function ServicesSection() {
+interface ServicesSectionProps {
+  services: NormalizedService[];
+}
+
+export function ServicesSection({ services }: ServicesSectionProps) {
   const { ref, isVisible } = useReveal(0.3);
 
-  // Local manually-defined services (matching NormalizedService)
-  const services: NormalizedService[] = [
-    {
-      number: '01',
-      title: 'پشتیبانی شبکه',
-      category: 'IT Support',
-      slug: 'network-support',
-      direction: 'left',
-    },
-    {
-      number: '02',
-      title: 'طراحی وبسایت',
-      category: 'Website Development',
-      slug: 'website-development',
-      direction: 'right',
-    },
-    {
-      number: '03',
-      title: 'هاستینگ و دامین',
-      category: 'Domain & Hosting',
-      slug: 'domain-hosting',
-      direction: 'left',
-    },
-    {
-      number: '04',
-      title: 'امنیت سایبری',
-      category: 'Cybersecurity',
-      slug: 'cybersecurity',
-      direction: 'right',
-    },
-    {
-      number: '05',
-      title: 'اسمارت هوم',
-      category: 'Smart Home',
-      slug: 'smart-home',
-      direction: 'left',
-    },
-  ];
+  // Fallback if API fails or returns empty
+  const displayServices = services.length > 0 ? services : fallbackServices;
 
   return (
     <section
@@ -77,7 +44,7 @@ export function ServicesSection() {
 
         {/* Services list */}
         <div className='space-y-6 md:space-y-6'>
-          {services.map((service, i) => (
+          {displayServices.map((service, i) => (
             <ServiceCard
               key={i}
               service={service}
@@ -146,3 +113,35 @@ function ServiceCard({
     </div>
   );
 }
+
+// Fallback data just in case WP is down
+const fallbackServices: NormalizedService[] = [
+  {
+    number: '01',
+    title: 'پشتیبانی شبکه',
+    category: 'IT Support',
+    slug: 'network-support',
+    direction: 'left',
+  },
+  {
+    number: '02',
+    title: 'طراحی وبسایت',
+    category: 'Website Development',
+    slug: 'website-development',
+    direction: 'right',
+  },
+  {
+    number: '03',
+    title: 'هاستینگ و دامین',
+    category: 'Domain & Hosting',
+    slug: 'domain-hosting',
+    direction: 'left',
+  },
+  {
+    number: '04',
+    title: 'امنیت سایبری',
+    category: 'Cybersecurity',
+    slug: 'cybersecurity',
+    direction: 'right',
+  },
+];

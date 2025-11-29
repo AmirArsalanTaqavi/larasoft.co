@@ -12,28 +12,40 @@ export function ContactSection() {
     email: '',
     message: '',
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [status, setStatus] = useState<
+    'idle' | 'submitting' | 'success' | 'error'
+  >('idle');
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Basic validation
     if (!formData.name || !formData.email || !formData.message) {
       return;
     }
 
-    setIsSubmitting(true);
+    setStatus('submitting');
 
-    // Simulate form submission (replace with actual API call later)
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    setIsSubmitting(false);
-    setSubmitSuccess(true);
-    setFormData({ name: '', email: '', message: '' });
+      if (!response.ok) throw new Error('Failed to send');
 
-    // Reset success message after 5 seconds
-    setTimeout(() => setSubmitSuccess(false), 5000);
+      setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+
+      // Reset success message after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch (error) {
+      console.error(error);
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 5000);
+    }
   };
 
   return (
@@ -139,7 +151,7 @@ export function ContactSection() {
             </div>
           </div>
 
-          {/* Right side - Minimal form */}
+          {/* Right side - Form connected to API */}
           <div className='flex flex-col justify-center'>
             <form onSubmit={handleSubmit} className='space-y-4 md:space-y-6'>
               <div
@@ -160,6 +172,7 @@ export function ContactSection() {
                     setFormData({ ...formData, name: e.target.value })
                   }
                   required
+                  disabled={status === 'submitting'}
                   className='border-foreground/30 text-foreground placeholder:text-foreground/40 focus:border-foreground/50 w-full border-b bg-transparent py-1.5 text-sm focus:outline-none md:py-2 md:text-base'
                   placeholder='Your name'
                 />
@@ -183,6 +196,7 @@ export function ContactSection() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   required
+                  disabled={status === 'submitting'}
                   className='border-foreground/30 text-foreground placeholder:text-foreground/40 focus:border-foreground/50 w-full border-b bg-transparent py-1.5 text-sm focus:outline-none md:py-2 md:text-base'
                   placeholder='your@email.com'
                 />
@@ -206,6 +220,7 @@ export function ContactSection() {
                     setFormData({ ...formData, message: e.target.value })
                   }
                   required
+                  disabled={status === 'submitting'}
                   className='border-foreground/30 font-vazirmatn text-foreground placeholder:text-foreground/40 focus:border-foreground/50 w-full border-b bg-transparent py-1.5 text-sm focus:outline-none md:py-2 md:text-base'
                   placeholder='در رابطه با پروژه خود بنویسید...'
                 />
@@ -222,14 +237,20 @@ export function ContactSection() {
                 <MagneticButton
                   variant='primary'
                   size='lg'
-                  className='font-vazirmatn w-full disabled:opacity-50'
-                  onClick={isSubmitting ? undefined : undefined}
+                  className='font-vazirmatn w-full disabled:cursor-not-allowed disabled:opacity-50'
+                  onClick={status === 'submitting' ? undefined : undefined}
                 >
-                  {isSubmitting ? 'در حال ارسال' : 'ارسلال پیام'}
+                  {status === 'submitting' ? 'در حال ارسال...' : 'ارسال پیام'}
                 </MagneticButton>
-                {submitSuccess && (
-                  <p className='font-space text-foreground/80 mt-3 text-center text-sm'>
+
+                {status === 'success' && (
+                  <p className='font-space text-accent animate-in fade-in mt-3 text-center text-sm'>
                     پیام شما با موفقیت ارسال شد!
+                  </p>
+                )}
+                {status === 'error' && (
+                  <p className='font-space animate-in fade-in mt-3 text-center text-sm text-red-500'>
+                    خطایی رخ داد. لطفا دوباره تلاش کنید.
                   </p>
                 )}
               </div>

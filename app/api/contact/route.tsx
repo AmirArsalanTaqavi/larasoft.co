@@ -1,5 +1,5 @@
 import { getServiceList, getPostList } from '@/lib/wordpress';
-import { HomeClient } from './home-client';
+import { HomeClient } from '@/app/home-client';
 
 // Force revalidation every hour so data stays fresh
 export const revalidate = 3600;

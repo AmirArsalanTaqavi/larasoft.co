@@ -2,41 +2,17 @@
 
 import { useReveal } from '@/hooks/use-reveal';
 import { MagneticButton } from '../magnetic-button';
+import { NormalizedPost } from '@/lib/wordpress';
 
-export function BlogSection() {
+interface BlogSectionProps {
+  posts: NormalizedPost[];
+}
+
+export function BlogSection({ posts }: BlogSectionProps) {
   const { ref, isVisible } = useReveal(0.3);
 
-  const blogs = [
-    {
-      id: '01',
-      title: 'Creative Development',
-      description: "Pushing the boundaries of what's possible on the web",
-      direction: 'top',
-      slug: '',
-    },
-    {
-      id: '02',
-      title: 'Visual Design',
-      description:
-        'Crafting memorable experiences through thoughtful aesthetics',
-      direction: 'right',
-      slug: '',
-    },
-    {
-      id: '03',
-      title: 'Motion & Animation',
-      description: 'Bringing interfaces to life with purposeful movement',
-      direction: 'left',
-      slug: '',
-    },
-    {
-      id: '04',
-      title: 'Technical Strategy',
-      description: 'Building scalable solutions that perform beautifully',
-      direction: 'bottom',
-      slug: '',
-    },
-  ];
+  // Fallback if API fails
+  const displayPosts = posts.length > 0 ? posts : fallbackPosts;
 
   return (
     <section
@@ -66,10 +42,10 @@ export function BlogSection() {
 
         {/* Cards */}
         <div className='font-vazirmatn grid gap-8 md:grid-cols-2 md:gap-x-16 md:gap-y-12 lg:gap-x-24'>
-          {blogs.map((blog, index) => (
+          {displayPosts.map((post, index) => (
             <BlogCard
-              key={blog.id}
-              blog={blog}
+              key={index}
+              post={post}
               index={index}
               isVisible={isVisible}
             />
@@ -81,23 +57,17 @@ export function BlogSection() {
 }
 
 function BlogCard({
-  blog,
+  post,
   index,
   isVisible,
 }: {
-  blog: {
-    id: string;
-    title: string;
-    description: string;
-    direction: string;
-    slug: string;
-  };
+  post: NormalizedPost;
   index: number;
   isVisible: boolean;
 }) {
   const getRevealClass = () => {
     if (!isVisible) {
-      switch (blog.direction) {
+      switch (post.direction) {
         case 'left':
           return '-translate-x-16 opacity-0';
         case 'right':
@@ -120,18 +90,21 @@ function BlogCard({
     >
       <div className='mb-3 flex items-center gap-3'>
         <div className='bg-foreground/30 group-hover:bg-accent h-px w-8 transition-all duration-300 group-hover:w-12' />
-        <span className='font-space text-foreground/60 text-xs'>{blog.id}</span>
+        <span className='font-space text-foreground/60 text-xs'>
+          {post.number}
+        </span>
       </div>
 
       <h3 className='font-space text-foreground mb-2 text-2xl font-light md:text-3xl'>
-        {blog.title}
+        {post.title}
       </h3>
-      <p className='text-foreground/80 max-w-sm text-sm leading-relaxed md:text-base'>
-        {blog.description}
-      </p>
+      <div
+        className='text-foreground/80 line-clamp-3 max-w-sm text-sm leading-relaxed md:text-base'
+        dangerouslySetInnerHTML={{ __html: post.excerpt }}
+      />
       <MagneticButton
         variant='ghost'
-        href={`/services/${blog.slug}`}
+        href={`/posts/${post.slug}`}
         className='mt-3'
       >
         بیشتر
@@ -139,3 +112,42 @@ function BlogCard({
     </div>
   );
 }
+
+const fallbackPosts: NormalizedPost[] = [
+  {
+    number: '01',
+    title: 'Creative Development',
+    excerpt:
+      "Pushing the boundaries of what's possible on the web with modern technologies.",
+    category: 'Tech',
+    direction: 'top',
+    slug: '#',
+  },
+  {
+    number: '02',
+    title: 'Visual Design',
+    excerpt:
+      'Crafting memorable experiences through thoughtful aesthetics and user-centric design.',
+    category: 'Design',
+    direction: 'right',
+    slug: '#',
+  },
+  {
+    number: '03',
+    title: 'Motion & Animation',
+    excerpt:
+      'Bringing interfaces to life with purposeful movement and GSAP animations.',
+    category: 'Motion',
+    direction: 'left',
+    slug: '#',
+  },
+  {
+    number: '04',
+    title: 'Technical Strategy',
+    excerpt:
+      'Building scalable solutions that perform beautifully across all devices.',
+    category: 'Strategy',
+    direction: 'bottom',
+    slug: '#',
+  },
+];

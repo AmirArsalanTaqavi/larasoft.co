@@ -121,8 +121,6 @@ export function ScrollProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-
         if (!scrollContainerRef.current || isScrollingRef.current) return;
 
         scrollContainerRef.current.scrollBy({

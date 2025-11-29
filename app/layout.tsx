@@ -1,14 +1,16 @@
-import type React from 'react';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import { getAcfOptions } from '@/lib/wordpress';
-import { AppProviders } from './providers';
 import './globals.css';
-import Background from '@/components/background';
-import { CustomCursor } from '@/components/custom-cursor';
-import { GrainOverlay } from '@/components/grain-overlay';
+import { ThemeProvider } from '@/components/theme-provider';
+import NavbarClient from './navbar-client';
 import { ScrollProvider } from '@/components/scroll-context';
-import Navbar from '@/components/ui/navbar';
+import { getAcfOptions } from '@/lib/wordpress';
+import { GoogleAnalytics } from '@next/third-parties/google';
+
+import { StructuredData } from '@/components/structured-data';
+import { GrainOverlay } from '@/components/grain-overlay';
+import { CustomCursor } from '@/components/custom-cursor';
+import Background from '@/components/background';
 
 const vazirmatn = localFont({
   src: './fonts/vazirmatn.woff2',
@@ -58,26 +60,34 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
-  const siteOptions = await getAcfOptions();
+}>) {
+  const options = await getAcfOptions();
 
   return (
     <html lang='fa' dir='rtl' suppressHydrationWarning>
-      <head>
-        {siteOptions?.favicon?.url && (
-          <link rel='icon' href={siteOptions.favicon.url} sizes='any' />
-        )}
-      </head>
-      <body className='h-dvh min-h-dvh'>
+      <body
+        className={`${vazirmatn.variable} ${larasoftFont.variable} ${spaceFont.variable} bg-background text-foreground selection:bg-accent overflow-x-hidden antialiased selection:text-black`}
+      >
+        <StructuredData /> {/* <--- ADD THIS HERE */}
         <ScrollProvider>
-          <Navbar />
-          <Background />
-          <GrainOverlay />
-          <AppProviders>{children}</AppProviders>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='dark'
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ScrollProvider>
+              <GrainOverlay />
+              <Background />
+              <NavbarClient menuItems={[]} />
+              {children}
+            </ScrollProvider>
+          </ThemeProvider>
         </ScrollProvider>
       </body>
+      <GoogleAnalytics gaId='G-XYZ123456' />
     </html>
   );
 }
