@@ -126,7 +126,8 @@ const Scene: React.FC<{
 }> = ({ onReady, logoStart = false, modelPath, envPreset = 'city' }) => {
   return (
     <>
-      <Environment preset={envPreset as any} />
+      {/* Updated to use your local HDR file */}
+      <Environment files="/field.hdr" />
       <ambientLight intensity={0.5} />
       <Logo onReady={onReady} start={logoStart} modelPath={modelPath} />
     </>
@@ -159,7 +160,7 @@ const FloatingLogo: React.FC<FloatingLogoProps> = memo(
     return (
       <div
         className={cn(
-          'pointer-events-none absolute top-0 left-0 z-0 h-dvh w-dvw transition-opacity duration-700 ease-out',
+          'pointer-events-none absolute top-0 left-0 z-0 h-full w-full transition-opacity duration-700 ease-out',
           sceneReady ? 'opacity-100' : 'opacity-0',
           className
         )}

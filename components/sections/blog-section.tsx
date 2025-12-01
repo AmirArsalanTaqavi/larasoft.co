@@ -3,6 +3,8 @@
 import { useReveal } from '@/hooks/use-reveal';
 import { MagneticButton } from '../magnetic-button';
 import { NormalizedPost } from '@/lib/wordpress';
+import Link from 'next/link';
+import { DotPattern } from '../ui/dot-pattern';
 
 interface BlogSectionProps {
   posts: NormalizedPost[];
@@ -12,13 +14,14 @@ export function BlogSection({ posts }: BlogSectionProps) {
   const { ref, isVisible } = useReveal(0.3);
 
   // Fallback if API fails
-  const displayPosts = posts.length > 0 ? posts : fallbackPosts;
+  const displayPosts = posts && posts.length > 0 ? posts : fallbackPosts;
 
   return (
     <section
       id='section-2'
       ref={ref}
-      className='flex h-dvh w-dvw shrink-0 snap-start items-center px-6 pt-20 md:px-12 md:pt-0 lg:px-16'
+      className='flex h-dvh w-dvw shrink-0 snap-start items-center px-6 pt-20 md:px-clear
+       md:pt-0 lg:px-16'
     >
       <div className='mx-auto w-full max-w-7xl'>
         {/* Heading */}
@@ -30,21 +33,21 @@ export function BlogSection({ posts }: BlogSectionProps) {
           }`}
         >
           <h2 className='font-larasoft mb-2 text-2xl font-light tracking-tight md:text-xl lg:text-6xl'>
-            مقالات
+            دانش و فناوری
           </h2>
           <p className='font-space text-foreground/60 text-sm md:text-base'>
-            / Blog
+            / Latest Insights
           </p>
           <MagneticButton variant='white' href='/posts' className='mt-3'>
-            همه مقالات
+            آرشیو مقالات
           </MagneticButton>
         </div>
 
-        {/* Cards */}
-        <div className='font-vazirmatn grid gap-8 md:grid-cols-2 md:gap-x-16 md:gap-y-12 lg:gap-x-24'>
+        {/* Blog Grid */}
+        <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
           {displayPosts.map((post, index) => (
             <BlogCard
-              key={index}
+              key={post.slug}
               post={post}
               index={index}
               isVisible={isVisible}
@@ -65,89 +68,94 @@ function BlogCard({
   index: number;
   isVisible: boolean;
 }) {
-  const getRevealClass = () => {
-    if (!isVisible) {
-      switch (post.direction) {
-        case 'left':
-          return '-translate-x-16 opacity-0';
-        case 'right':
-          return 'translate-x-16 opacity-0';
-        case 'top':
-          return '-translate-y-16 opacity-0';
-        case 'bottom':
-          return 'translate-y-16 opacity-0';
-        default:
-          return 'translate-y-12 opacity-0';
-      }
-    }
-    return 'translate-x-0 translate-y-0 opacity-100';
-  };
-
   return (
-    <div
-      className={`group hover:border-accent rounded-md pt-2 pr-4 pb-3 transition-all duration-700 hover:border ${getRevealClass()}`}
-      style={{ transitionDelay: `${index * 150}ms` }}
+    <Link
+      href={`/posts/${post.slug}`}
+      className={`group border-foreground/10 backdrop-blur-2xl hover:border-accent hover:bg-Background/20 relative flex flex-col justify-between rounded-xl border bg-background/10 p-6 transition-all duration-500 hover:shadow-lg ${
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
+      }`}
+      style={{ transitionDelay: `${index * 100}ms` }}
     >
-      <div className='mb-3 flex items-center gap-3'>
-        <div className='bg-foreground/30 group-hover:bg-accent h-px w-8 transition-all duration-300 group-hover:w-12' />
-        <span className='font-space text-foreground/60 text-xs'>
-          {post.number}
-        </span>
+      <DotPattern className='rounded-2xl'/>
+      <div>
+        <div className='mb-4 flex items-center justify-between'>
+          <span className='font-space text-accent text-xs'>{post.number}</span>
+          <span className='font-space border-foreground/10 text-foreground/60 rounded-full border px-2 py-0.5 text-[10px] uppercase'>
+            {post.category}
+          </span>
+        </div>
+
+        <h3 className='font-vazirmatn text-foreground mb-3 text-lg font-medium leading-snug transition-colors group-hover:text-accent md:text-xl'>
+          {post.title}
+        </h3>
+        <div
+          className='font-vazirmatn text-foreground/60 line-clamp-3 max-w-sm text-sm leading-relaxed'
+          dangerouslySetInnerHTML={{ __html: post.excerpt }}
+        />
       </div>
 
-      <h3 className='font-space text-foreground mb-2 text-2xl font-light md:text-3xl'>
-        {post.title}
-      </h3>
-      <div
-        className='text-foreground/80 line-clamp-3 max-w-sm text-sm leading-relaxed md:text-base'
-        dangerouslySetInnerHTML={{ __html: post.excerpt }}
-      />
-      <MagneticButton
-        variant='ghost'
-        href={`/posts/${post.slug}`}
-        className='mt-3'
-      >
-        بیشتر
-      </MagneticButton>
-    </div>
+      <div className='mt-4 flex items-center gap-2 text-xs font-medium text-foreground/40 transition-colors group-hover:text-accent'>
+        <span>مطالعه کنید</span>
+        <svg
+          width='10'
+          height='10'
+          viewBox='0 0 10 10'
+          fill='none'
+          xmlns='http://www.w3.org/2000/svg'
+          className='transition-transform duration-300 group-hover:-translate-x-1'
+        >
+          <path
+            d='M4.5 1L0.5 5M0.5 5L4.5 9M0.5 5H9.5'
+            stroke='currentColor'
+            strokeWidth='1.5'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+          />
+        </svg>
+      </div>
+    </Link>
   );
 }
 
 const fallbackPosts: NormalizedPost[] = [
   {
     number: '01',
-    title: 'Creative Development',
+    title: 'استراتژی‌های تحول دیجیتال در سازمان‌های مدرن',
     excerpt:
-      "Pushing the boundaries of what's possible on the web with modern technologies.",
-    category: 'Tech',
+      'چگونه فناوری‌های نوین می‌توانند بازدهی عملیاتی سازمان شما را تا ۵۰٪ افزایش دهند.',
+    category: 'Business',
     direction: 'top',
-    slug: '#',
+    slug: 'post-1',
+    image: null,
   },
   {
     number: '02',
-    title: 'Visual Design',
+    title: 'چشم‌انداز امنیت سایبری در سال ۲۰۲۵',
     excerpt:
-      'Crafting memorable experiences through thoughtful aesthetics and user-centric design.',
-    category: 'Design',
+      'تحلیل تهدیدات نوظهور و راهکارهای جامع دفاعی برای حفاظت از دارایی‌های دیجیتال.',
+    category: 'Security',
     direction: 'right',
-    slug: '#',
+    slug: 'post-2',
+    image: null,
   },
   {
     number: '03',
-    title: 'Motion & Animation',
+    title: 'نقش حیاتی تجربه کاربری (UX) در موفقیت محصول',
     excerpt:
-      'Bringing interfaces to life with purposeful movement and GSAP animations.',
-    category: 'Motion',
+      'چرا طراحی کاربرمحور مهم‌ترین وجه تمایز در بازارهای رقابتی امروزی است.',
+    category: 'Design',
     direction: 'left',
-    slug: '#',
+    slug: 'post-3',
+    image: null,
   },
   {
     number: '04',
-    title: 'Technical Strategy',
+    title: 'بهینه‌سازی هزینه‌ها با برون‌سپاری خدمات IT',
     excerpt:
-      'Building scalable solutions that perform beautifully across all devices.',
-    category: 'Strategy',
+      'مدیریت هوشمند منابع و افزایش پایداری سیستم‌ها از طریق خدمات مدیریت شده (Managed Services).',
+    category: 'IT Support',
     direction: 'bottom',
-    slug: '#',
+    slug: 'post-4',
+    image: null,
   },
 ];

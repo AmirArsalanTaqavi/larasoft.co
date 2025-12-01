@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Metadata } from 'next';
 import { MagneticButton } from '@/components/magnetic-button';
+import DotPattern from '@/components/ui/dot-pattern';
 
 export const metadata: Metadata = {
   title: 'درباره ما | LaraSoft',
@@ -10,10 +11,10 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className='min-h-screen w-full px-6 pt-32 pb-20 md:px-12'>
+    <main className='min-h-screen w-dvw overflow-x-hidden px-6 pt-32 pb-20 md:px-12'>
       <div className='mx-auto max-w-7xl'>
         {/* Hero Section */}
-        <section className='animate-in fade-in slide-in-from-bottom-8 mb-24 duration-1000'>
+        <section className='animate-in fade-in slide-in-from-bottom-8 fill-mode-forwards mb-24 duration-1000'>
           <h1 className='font-larasoft text-foreground mb-8 text-6xl leading-[0.9] md:text-8xl'>
             تلفیق <span className='text-accent'>هنر</span> و{' '}
             <span className='text-accent'>تکنولوژی</span>
@@ -25,10 +26,13 @@ export default function AboutPage() {
           </p>
         </section>
 
-        {/* The Vision Grid */}
+        {/* The Vision Grid - Optimized Animation */}
         <section className='mb-32 grid grid-cols-1 gap-12 md:grid-cols-2'>
-          <div className='animate-in fade-in slide-in-from-bottom-8 space-y-8 delay-200 duration-1000'>
-            <div className='border-foreground/10 bg-foreground/5 hover:border-accent/30 rounded-3xl border p-8 transition-colors md:p-12'>
+          {/* Added 'will-change-transform' to help browser composite layer */}
+          <div className='animate-in fade-in slide-in-from-bottom-4 fill-mode-forwards relative space-y-8 delay-200 duration-700 will-change-transform'>
+            <div className='border-foreground/10 bg-foreground/5 hover:border-accent/30 rounded-3xl border p-8 backdrop-blur-2xl transition-colors md:p-12'>
+              <DotPattern className='rounded-2xl' />
+
               <h3 className='font-larasoft text-accent mb-4 text-3xl'>
                 Lara Security
               </h3>
@@ -37,7 +41,9 @@ export default function AboutPage() {
                 تست نفوذ و ایمن‌سازی، از دارایی‌های دیجیتال شما محافظت می‌کنیم.
               </p>
             </div>
-            <div className='border-foreground/10 bg-foreground/5 hover:border-accent/30 rounded-3xl border p-8 transition-colors md:p-12'>
+            <div className='border-foreground/10 bg-foreground/5 hover:border-accent/30 rounded-3xl border p-8 backdrop-blur-2xl transition-colors md:p-12'>
+              <DotPattern className='rounded-2xl' />
+
               <h3 className='font-larasoft text-accent mb-4 text-3xl'>
                 Lara Center
               </h3>
@@ -48,10 +54,10 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className='border-foreground/10 animate-in fade-in slide-in-from-bottom-8 relative h-full min-h-[400px] overflow-hidden rounded-3xl border delay-300 duration-1000'>
+          <div className='border-foreground/10 animate-in fade-in slide-in-from-bottom-4 fill-mode-forwards relative h-full min-h-[400px] overflow-hidden rounded-3xl border backdrop-blur-2xl delay-300 duration-700 will-change-transform'>
             {/* Abstract tech/art background */}
-            <div className='from-accent/20 absolute inset-0 bg-gradient-to-br to-transparent opacity-50' />
-            <div className='absolute inset-0 flex items-center justify-center'>
+            <div className='bg-accent/20 absolute inset-0 flex items-center justify-center'>
+              <DotPattern className='rounded-2xl' />
               <div className='p-8 text-center'>
                 <h2 className='font-space text-foreground/10 text-5xl font-bold tracking-tighter uppercase md:text-6xl'>
                   Since 2025
@@ -66,12 +72,14 @@ export default function AboutPage() {
           <h2 className='font-larasoft mb-12 text-4xl md:text-5xl'>تیم ما</h2>
           <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
             {/* Founder */}
-            <div className='group border-foreground/10 bg-background relative overflow-hidden rounded-2xl border'>
-              <div className='bg-foreground/5 relative aspect-[4/3]'>
-                {/* You can replace with real photo later */}
-                <div className='from-background absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-80' />
+            <div className='group border-foreground/10 bg-background/50 hover:border-accent/50 relative overflow-hidden rounded-2xl border backdrop-blur-2xl transition-colors duration-500'>
+              <div className='bg-foreground/5 relative aspect-4/3'>
+                {/* Placeholder for now */}
+                <div className='from-background absolute inset-0 bg-linear-to-t via-transparent to-transparent opacity-80' />
               </div>
               <div className='absolute right-0 bottom-0 left-0 p-8'>
+                <DotPattern className='rounded-2xl' />
+
                 <h3 className='font-vazirmatn mb-1 text-2xl font-bold'>
                   امیرارسلان تقوی
                 </h3>
@@ -87,12 +95,14 @@ export default function AboutPage() {
             </div>
 
             {/* Creative Director */}
-            <div className='group border-foreground/10 bg-background relative overflow-hidden rounded-2xl border'>
-              <div className='bg-foreground/5 relative aspect-[4/3]'>
-                {/* You can replace with real photo later */}
-                <div className='from-background absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-80' />
+            <div className='group border-foreground/10 bg-background/50 hover:border-accent/50 relative overflow-hidden rounded-2xl border backdrop-blur-2xl transition-colors duration-500'>
+              <div className='bg-foreground/5 relative aspect-4/3'>
+                {/* Placeholder for now */}
+                <div className='from-background absolute inset-0 bg-linear-to-t via-transparent to-transparent opacity-80' />
               </div>
               <div className='absolute right-0 bottom-0 left-0 p-8'>
+                <DotPattern className='rounded-2xl' />
+
                 <h3 className='font-vazirmatn mb-1 text-2xl font-bold'>سارا</h3>
                 <p className='font-space text-accent mb-4 text-sm'>
                   Creative Director & Artist

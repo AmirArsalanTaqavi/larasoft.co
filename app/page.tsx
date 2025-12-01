@@ -1,14 +1,13 @@
-import { getServiceList, getPostList } from '@/lib/wordpress';
 import { HomeClient } from './home-client';
+import { getPostList, getServiceList } from '@/lib/wordpress';
 
-// Force revalidation every hour so data stays fresh
-export const revalidate = 3600;
+export const revalidate = 60; // Update every minute
 
 export default async function Home() {
-  // Fetch both in parallel for maximum speed
+  // Simple pass-through: lib already returns normalized data
   const [services, posts] = await Promise.all([
-    getServiceList(),
-    getPostList(),
+    getServiceList(4),
+    getPostList(4),
   ]);
 
   return <HomeClient services={services} posts={posts} />;

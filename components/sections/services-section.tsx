@@ -4,6 +4,7 @@ import { useReveal } from '@/hooks/use-reveal';
 import { MagneticButton } from '../magnetic-button';
 import { NormalizedService } from '@/lib/wordpress';
 import Link from 'next/link';
+import DotPattern from '../ui/dot-pattern';
 
 interface ServicesSectionProps {
   services: NormalizedService[];
@@ -12,8 +13,8 @@ interface ServicesSectionProps {
 export function ServicesSection({ services }: ServicesSectionProps) {
   const { ref, isVisible } = useReveal(0.3);
 
-  // Fallback if API fails or returns empty
-  const displayServices = services.length > 0 ? services : fallbackServices;
+  // If WordPress returns data, use it. Otherwise, use fallback.
+  const displayServices = services && services.length > 0 ? services : fallbackServices;
 
   return (
     <section
@@ -21,7 +22,7 @@ export function ServicesSection({ services }: ServicesSectionProps) {
       id='section-1'
       className='flex h-dvh w-dvw shrink-0 snap-start items-center px-6 pt-20 md:px-12 md:pt-0 lg:px-16'
     >
-      <div className='mx-auto w-dvw max-w-7xl'>
+      <div className='mx-auto w-full max-w-7xl'>
         {/* Header */}
         <div
           className={`mb-6 transition-all duration-700 md:mb-12 ${
@@ -31,24 +32,24 @@ export function ServicesSection({ services }: ServicesSectionProps) {
           }`}
         >
           <h2 className='font-larasoft mb-2 text-2xl font-light tracking-tight md:text-xl lg:text-6xl'>
-            سرویس ها
+            راهکارهای ما
           </h2>
           <p className='font-space text-foreground/60 text-sm md:text-base'>
-            / Services
+            / Our Solutions
           </p>
 
           <MagneticButton variant='white' href='/services' className='mt-3'>
-            همه سرویس ها
+            مشاهده همه خدمات
           </MagneticButton>
         </div>
 
-        {/* Services list */}
-        <div className='space-y-6 md:space-y-6'>
-          {displayServices.map((service, i) => (
+        {/* Services Grid */}
+        <div className='grid gap-4 md:grid-cols-1 lg:grid-cols-1' dir='ltr'>
+          {displayServices.map((service, index) => (
             <ServiceCard
-              key={i}
+              key={service.slug}
               service={service}
-              index={i}
+              index={index}
               isVisible={isVisible}
             />
           ))}
@@ -67,31 +68,22 @@ function ServiceCard({
   index: number;
   isVisible: boolean;
 }) {
-  const getRevealClass = () => {
-    if (!isVisible) {
-      return service.direction === 'left'
-        ? '-translate-x-16 opacity-0'
-        : 'translate-x-16 opacity-0';
-    }
-    return 'translate-x-0 opacity-100';
-  };
-
   return (
-    <div
-      className={`group border-secondary/50 hover:border-accent/50 flex items-center justify-between border-b py-2 transition-all duration-700 md:py-3 ${getRevealClass()}`}
-      style={{
-        transitionDelay: `${index * 150}ms`,
-        marginLeft: index % 2 === 0 ? '0' : 'auto',
-        maxWidth: index % 2 === 0 ? '85%' : '90%',
-      }}
+    <Link
+      href={`/services/${service.slug}`}
+      className={`group border-foreground/10 backdrop-blur-2xl hover:border-accent hover:bg-Background/20 relative flex flex-col justify-between rounded-xl border bg-background/10 p-6 transition-all duration-500 hover:shadow-lg ${
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
+      }`}
+      style={{ transitionDelay: `${index * 100}ms` }}
     >
-      <div className='flex items-baseline gap-3 md:gap-6'>
-        <span className='font-space text-foreground/30 group-hover:text-foreground/50 text-xs transition-colors md:text-base'>
+      <DotPattern className='rounded-2xl'/>
+      <div className='flex items-start justify-between gap-3 md:gap-6'>
+        <span className='font-space text-foreground/30 group-hover:text-accent text-xs transition-colors md:text-base'>
           {service.number}
         </span>
 
         <div>
-          <h3 className='font-vazirmatn text-foreground mb-1 text-xl font-light transition-transform duration-300 group-hover:translate-x-2 md:text-2xl lg:text-2xl'>
+          <h3 className='font-vazirmatn text-foreground mb-1 text-xl font-light transition-transform duration-300 group-hover:-translate-x-2 md:text-2xl lg:text-2xl'>
             {service.title}
           </h3>
 
@@ -101,47 +93,64 @@ function ServiceCard({
         </div>
       </div>
 
+      {/* Visual indicator that this is a link */}
       <span className='font-vazirmatn text-foreground/30 text-xs md:text-sm'>
-        <MagneticButton
-          variant='ghost'
-          href={`/services/${service.slug}`}
-          className='mt-3'
-        >
-          بیشتر
-        </MagneticButton>
+        <div className='mt-3 inline-flex items-center gap-2 text-sm transition-colors group-hover:text-accent'>
+          <span>توضیحات بیشتر</span>
+          <svg
+            width='12'
+            height='12'
+            viewBox='0 0 12 12'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+            className='transition-transform duration-300 group-hover:-translate-x-1'
+          >
+            <path
+              d='M6 1L1 6M1 6L6 11M1 6H11'
+              stroke='currentColor'
+              strokeWidth='1.5'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            />
+          </svg>
+        </div>
       </span>
-    </div>
+    </Link>
   );
 }
 
-// Fallback data just in case WP is down
+// Fallback data (Updated to match NormalizedService interface)
 const fallbackServices: NormalizedService[] = [
   {
     number: '01',
-    title: 'پشتیبانی شبکه',
-    category: 'IT Support',
+    title: 'پشتیبانی شبکه و زیرساخت',
+    category: 'Network Infrastructure',
     slug: 'network-support',
     direction: 'left',
+    image: null,
   },
   {
     number: '02',
-    title: 'طراحی وبسایت',
-    category: 'Website Development',
+    title: 'توسعه نرم‌افزار و وب',
+    category: 'Software Solutions',
     slug: 'website-development',
     direction: 'right',
+    image: null,
   },
   {
     number: '03',
-    title: 'هاستینگ و دامین',
-    category: 'Domain & Hosting',
-    slug: 'domain-hosting',
-    direction: 'left',
+    title: 'امنیت سایبری',
+    category: 'Cybersecurity',
+    slug: 'cyber-security',
+    direction: 'top',
+    image: null,
   },
   {
     number: '04',
-    title: 'امنیت سایبری',
-    category: 'Cybersecurity',
-    slug: 'cybersecurity',
-    direction: 'right',
+    title: 'خدمات دیتاسنتر',
+    category: 'Data Center',
+    slug: 'data-center',
+    direction: 'bottom',
+    image: null,
   },
 ];

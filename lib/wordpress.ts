@@ -1,4 +1,8 @@
-// src/lib/wordpress.ts
+import { notFound } from 'next/navigation';
+
+// --- CONFIG ---
+// We use the env var exactly as you have it (http://localhost:8080/wp-json)
+const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
 
 // --- INTERFACES ---
 export interface WpSettings {
@@ -9,15 +13,12 @@ export interface WpSettings {
 export interface WpAcfOptions {
   site_logo?: { url: string; alt: string };
   favicon?: { url: string; alt: string };
-  color_primary?: string;
-  color_secondary?: string;
-  color_accent?: string;
-  color_text?: string;
-  color_background?: string;
-  color_surface?: string;
-  hero_background_image?: { url: string; alt: string };
-  background_image?: { url: string; alt: string };
+  // Mapping your specific ACF fields
+  site_title?: string;
+  site_description?: string;
   copyright_text?: string;
+  og_image?: { url: string } | string;
+  apple_icon?: { url: string } | string;
 }
 
 export interface WpPost {
@@ -26,214 +27,146 @@ export interface WpPost {
   title: { rendered: string };
   excerpt: { rendered: string };
   content: { rendered: string };
-  acf?: WpPostAcf;
+  acf?: any;
   _embedded?: {
     'wp:featuredmedia'?: Array<{
       source_url: string;
       alt_text: string;
     }>;
-  };
-  yoast_head_json?: {
-    title: string;
-    description?: string;
-    og_title?: string;
-    og_description?: string;
-    og_image?: { url: string }[];
+    'wp:term'?: Array<Array<{
+      name: string;
+      slug: string;
+    }>>;
   };
 }
 
-export interface WpPostAcf {
-  hero_title?: string;
-  hero_subtitle?: string;
-  hero_button_text?: string;
-  hero_button_link?: string;
-  services_section_title?: string;
-  posts_section_title?: string;
-  category?: string;
-  icon?: string; // For services if you add an icon field
-  [key: string]:
-    | Record<string, unknown>
-    | string
-    | number
-    | boolean
-    | null
-    | undefined;
-}
-
-export interface WpMenuItem {
-  ID: number;
-  id: number;
-  title: string;
-  url: string;
-  children?: WpMenuItem[];
-}
-
-// --- API CONFIG ---
-const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
-
-// --- FETCH HELPERS ---
-async function fetchWp<T>(endpoint: string, revalidate: number): Promise<T[]> {
-  if (!API_URL) return [];
-  try {
-    const res = await fetch(`${API_URL}/wp/v2/${endpoint}`, {
-      next: { revalidate },
-    });
-
-    if (!res.ok) {
-      console.error(`Fetch failed for endpoint: ${endpoint}`, await res.text());
-      return [];
-    }
-
-    return res.json() as Promise<T[]>;
-  } catch (error) {
-    console.error(`Fetch error for ${endpoint}:`, error);
-    return [];
-  }
-}
-
-// --- ACF OPTIONS ---
-export async function getAcfOptions(): Promise<WpAcfOptions | null> {
-  if (!API_URL) return null;
-  try {
-    const res = await fetch(`${API_URL}/acf/v3/options/options`, {
-      next: { revalidate: 60 },
-    });
-
-    if (!res.ok) return null;
-
-    const data = await res.json();
-    return data.acf;
-  } catch (error) {
-    console.error('Error fetching ACF options:', error);
-    return null;
-  }
-}
-
-// --- MENU ITEMS ---
-function mapMenuItems(items: any[]): WpMenuItem[] {
-  if (!Array.isArray(items)) return [];
-
-  return items.map((item: any) => ({
-    ...item,
-    ID: item.id || item.ID,
-    children: item.children ? mapMenuItems(item.children) : [],
-  }));
-}
-
-export async function getMenuItems(menuId: number): Promise<WpMenuItem[]> {
-  if (!API_URL) return [];
-
-  try {
-    const res = await fetch(`${API_URL}/wp-api-menus/v2/menus/${menuId}`, {
-      next: { revalidate: 3600 },
-    });
-
-    if (!res.ok) {
-      console.error(`Failed menu fetch ID: ${menuId}`, await res.text());
-      return [];
-    }
-
-    const menu = await res.json();
-    return mapMenuItems(menu.items || []);
-  } catch (error) {
-    console.error(`Error fetching menu ID ${menuId}:`, error);
-    return [];
-  }
-}
-
-// --- POSTS, PAGES, SERVICES ---
-export async function getPosts(): Promise<WpPost[]> {
-  return fetchWp<WpPost>('posts?_embed&per_page=10', 3600); // Increased limit for blog page
-}
-
-export async function getPages(): Promise<WpPost[]> {
-  return fetchWp<WpPost>('pages?_embed&per_page=20', 3600);
-}
-
-export async function getServices(): Promise<WpPost[]> {
-  return fetchWp<WpPost>('services?_embed&per_page=20', 3600);
-}
-
-// --- NORMALIZED SERVICES ---
+// UI Specific Interfaces (Normalized for Frontend)
 export interface NormalizedService {
   number: string;
   title: string;
   category: string;
   slug: string;
-  direction: 'left' | 'right';
-  icon?: string; // Placeholder for future icon logic
+  direction: 'left' | 'right' | 'top' | 'bottom';
+  image: string | null;
 }
 
-export function normalizeServices(services: WpPost[]): NormalizedService[] {
-  return services.map((service, index) => ({
-    number: (index + 1).toString().padStart(2, '0'),
-    title: service.title?.rendered || '',
-    category: String(service.acf?.category ?? 'Service'),
-    slug: service.slug || '',
-    direction: index % 2 === 0 ? 'left' : 'right',
-    icon: String(service.acf?.icon ?? ''),
-  }));
-}
-
-export async function getServiceList(): Promise<NormalizedService[]> {
-  const serviceList = await getServices();
-  return normalizeServices(serviceList);
-}
-
-// --- NORMALIZED POSTS ---
 export interface NormalizedPost {
   number: string;
   title: string;
   excerpt: string;
   category: string;
   slug: string;
-  image: string | null; // Added Image field
   direction: 'left' | 'right' | 'top' | 'bottom';
+  image: string | null;
 }
 
-export function normalizePosts(posts: WpPost[]): NormalizedPost[] {
+// --- FETCH HELPERS ---
+async function fetchWp<T>(endpoint: string, revalidate: number = 60): Promise<T[]> {
+  if (!API_URL) {
+    console.error('❌ API_URL is missing in .env.local');
+    return [];
+  }
+  
+  // Logic: API_URL is ".../wp-json", so we append "/wp/v2/..."
+  const fullUrl = `${API_URL}/wp/v2/${endpoint}`;
+
+  try {
+    const res = await fetch(fullUrl, {
+      next: { revalidate },
+    });
+
+    if (!res.ok) {
+      console.error(`❌ Fetch failed for: ${fullUrl} (${res.status})`);
+      return [];
+    }
+
+    return res.json() as Promise<T[]>;
+  } catch (error) {
+    console.error(`❌ Network error for ${fullUrl}:`, error);
+    return [];
+  }
+}
+
+// --- ACF OPTIONS (Global Site Data) ---
+export async function getAcfOptions(): Promise<WpAcfOptions | null> {
+  if (!API_URL) return null;
+  try {
+    // For ACF Options, the endpoint is slightly different usually
+    const res = await fetch(`${API_URL}/acf/v3/options/options`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.acf || data;
+  } catch (error) {
+    return null;
+  }
+}
+
+// --- NORMALIZERS ---
+function normalizeServices(services: WpPost[]): NormalizedService[] {
+  return services.map((service, index) => {
+    // Extract Image from _embedded (requires ?_embed in query)
+    const image = service._embedded?.['wp:featuredmedia']?.[0]?.source_url || null;
+    
+    // Attempt to find a category name, fallback to 'Service'
+    const category = service._embedded?.['wp:term']?.[0]?.[0]?.name || 'Service';
+
+    return {
+      number: (index + 1).toString().padStart(2, '0'),
+      title: service.title?.rendered || '',
+      category: category,
+      slug: service.slug || '',
+      // Assign direction for animations
+      direction: ['left', 'right', 'top', 'bottom'][index % 4] as any,
+      image: image,
+    };
+  });
+}
+
+function normalizePosts(posts: WpPost[]): NormalizedPost[] {
   return posts.map((post, index) => {
-    // Strip HTML tags from excerpt for cleaner UI
+    // Strip HTML tags from excerpt
     const rawExcerpt = post.excerpt?.rendered || '';
-    const cleanExcerpt =
-      rawExcerpt.replace(/<[^>]+>/g, '').slice(0, 100) + '...';
+    const cleanExcerpt = rawExcerpt.replace(/<[^>]+>/g, '').slice(0, 100) + '...';
 
-    // Extract Featured Image
     const image = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || null;
-
-    // Assign varying directions for visual interest
-    const directions: Array<'left' | 'right' | 'top' | 'bottom'> = [
-      'top',
-      'right',
-      'left',
-      'bottom',
-    ];
+    const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || 'Blog';
 
     return {
       number: (index + 1).toString().padStart(2, '0'),
       title: post.title?.rendered || '',
       excerpt: cleanExcerpt,
-      category: String(post.acf?.category ?? 'Blog'),
+      category: category,
       slug: post.slug || '',
-      image,
-      direction: directions[index % 4] || 'top',
+      direction: ['top', 'right', 'left', 'bottom'][index % 4] as any,
+      image: image,
     };
   });
 }
 
-export async function getPostList(): Promise<NormalizedPost[]> {
-  const posts = await getPosts();
+// --- MAIN GETTERS ---
+
+export async function getServiceList(limit: number = 10): Promise<NormalizedService[]> {
+  // We use your Services CPT endpoint. 
+  // IMPORTANT: We add _embed to get the images.
+  const services = await fetchWp<WpPost>(`services?_embed&per_page=${limit}`, 60);
+  return normalizeServices(services);
+}
+
+export async function getPostList(limit: number = 10): Promise<NormalizedPost[]> {
+  const posts = await fetchWp<WpPost>(`posts?_embed&per_page=${limit}`, 60);
   return normalizePosts(posts);
 }
 
-// --- FETCH ITEM BY SLUG ---
-export async function getItemBySlug(
-  slug: string,
-  type: 'posts' | 'pages' | 'services'
-): Promise<WpPost | null> {
-  const items = await fetchWp<WpPost>(
-    `${type}?slug=${slug}&_embed`,
-    type === 'posts' ? 60 : 3600
-  );
+// --- SINGLE ITEM GETTERS ---
+export async function getService(slug: string): Promise<WpPost | null> {
+  const items = await fetchWp<WpPost>(`services?slug=${slug}&_embed`, 60);
+  return items[0] || null;
+}
+
+export async function getPost(slug: string): Promise<WpPost | null> {
+  const items = await fetchWp<WpPost>(`posts?slug=${slug}&_embed`, 60);
   return items[0] || null;
 }

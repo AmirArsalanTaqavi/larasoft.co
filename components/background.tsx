@@ -44,7 +44,7 @@ export default function background() {
       }`}
       style={{ contain: 'strict' }}
     >
-      <Shader className='h-full w-full'>
+      <Shader className='h-dvh w-dvw'>
         <Swirl
           colorA='#00665e'
           colorB='#002924'

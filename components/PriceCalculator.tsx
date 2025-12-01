@@ -370,8 +370,8 @@ export default function PriceCalculator() {
   };
 
   return (
-    <div className='mx-12 rounded-md pb-8'>
-      <DotPattern width={10} height={10} />
+    <div className='mx-12 rounded-2xl pb-8'>
+      <DotPattern width={10} height={10} className='rounded-2xl' />
       <h2 className='text-foreground p-6 text-center text-3xl font-extrabold'>
         ماشین حساب آنلاین هزینه پشتیبانی
       </h2>

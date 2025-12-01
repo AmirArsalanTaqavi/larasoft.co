@@ -55,174 +55,108 @@ export function ContactSection() {
       className='flex h-dvh w-dvw shrink-0 snap-start items-center px-4 pt-20 md:px-12 md:pt-0 lg:px-16'
     >
       <div className='mx-auto w-full max-w-7xl'>
-        <div className='grid gap-8 md:grid-cols-[1.2fr_1fr] md:gap-16 lg:gap-24'>
-          <div className='flex flex-col justify-center'>
+        <div className='grid gap-12 lg:grid-cols-2 lg:gap-24'>
+          {/* Contact Info */}
+          <div>
             <div
-              className={`mb-6 transition-all duration-700 md:mb-12 ${
+              className={`mb-12 transition-all duration-700 ${
                 isVisible
-                  ? 'translate-x-0 opacity-100'
-                  : '-translate-x-12 opacity-0'
+                  ? 'translate-y-0 opacity-100'
+                  : '-translate-y-12 opacity-0'
               }`}
             >
-              <h2 className='font-larasoft text-foreground mb-2 text-4xl leading-[1.05] font-light tracking-tight md:mb-3 md:text-7xl lg:text-8xl'>
-                با ما
+              <h2 className='font-larasoft text-foreground mb-6 text-4xl font-light tracking-tight md:text-6xl lg:text-7xl'>
+                با ما در
                 <br />
-                در ارتباط باشید
-                <br />
+                تماس باشید
               </h2>
-              <p className='font-space text-foreground/60 text-xs md:text-base'>
-                Get in touch /
+              <p className='font-vazirmatn text-foreground/60 max-w-md text-base leading-relaxed'>
+                آماده شنیدن چالش‌ها و ایده‌های شما هستیم. برای مشاوره رایگان یا
+                شروع یک پروژه جدید، فرم روبرو را پر کنید یا از طریق راه‌های
+                ارتباطی با ما تماس بگیرید.
               </p>
             </div>
 
-            <div className='space-y-4 md:space-y-8'>
+            <div className='space-y-8'>
               <a
                 href='mailto:info@larasoft.co'
-                className={`group block transition-all duration-700 ${
+                className={`group flex items-center gap-4 transition-all duration-700 ${
                   isVisible
                     ? 'translate-x-0 opacity-100'
-                    : '-translate-x-16 opacity-0'
+                    : '-translate-x-12 opacity-0'
                 }`}
                 style={{ transitionDelay: '200ms' }}
               >
-                <div className='mb-1 flex items-center gap-2'>
-                  <Mail className='text-foreground/60 h-3 w-3' />
-                  <span className='font-space text-foreground/60 text-xs'>
-                    Email
-                  </span>
+                <div className='border-foreground/10 group-hover:border-accent group-hover:bg-accent/10 flex h-12 w-12 items-center justify-center rounded-full border transition-colors'>
+                  <Mail className='h-5 w-5' />
                 </div>
-                <p className='text-foreground group-hover:text-accent/70 text-base transition-colors md:text-2xl'>
-                  info@larasoft.co
-                </p>
-              </a>
-              <div
-                className={`transition-all duration-700 ${
-                  isVisible
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-12 opacity-0'
-                }`}
-                style={{ transitionDelay: '350ms' }}
-              >
-                <a
-                  href='https://maps.app.goo.gl/2zQ6qBBXEVbH9Ysu6'
-                  className={`group block transition-all duration-700 ${
-                    isVisible
-                      ? 'translate-x-0 opacity-100'
-                      : '-translate-x-16 opacity-0'
-                  }`}
-                  style={{ transitionDelay: '200ms' }}
-                >
-                  <div className='mb-1 flex items-center gap-2'>
-                    <MapPin className='text-foreground/60 h-3 w-3' />
-                    <span className='font-vazirmatn text-foreground/60 text-xs'>
-                      آدرس
-                    </span>
+                <div>
+                  <div className='font-vazirmatn text-xs opacity-50'>
+                    ایمیل
                   </div>
-                  <p className='text-foreground font-vazirmatn group-hover:text-accent/70 text-base transition-colors md:text-2xl'>
-                    تهران، ایران
-                    <br />
-                    میدان فردوسی، کوچه شاهرود
-                    <br />
-                    پلاک 5 واحد 3
-                  </p>
-                </a>
-              </div>
+                  <div className='font-space text-lg'>info@larasoft.co</div>
+                </div>
+              </a>
 
               <div
-                className={`flex gap-5 pt-2 transition-all duration-700 md:pt-4 ${
+                className={`flex items-center gap-4 transition-all duration-700 ${
                   isVisible
                     ? 'translate-x-0 opacity-100'
-                    : '-translate-x-8 opacity-0'
+                    : '-translate-x-12 opacity-0'
                 }`}
-                style={{ transitionDelay: '350ms' }}
+                style={{ transitionDelay: '300ms' }}
               >
-                {['WhatsApp', 'Instagram', 'LinkedIn', 'Telegram'].map(
-                  (social, i) => (
-                    <a
-                      key={social}
-                      href='#'
-                      className='font-space text-accent/60 hover:border-accent/60 hover:text-foreground/90 text-s border-b border-transparent transition-all'
-                    >
-                      {social}
-                    </a>
-                  )
-                )}
+                <div className='border-foreground/10 flex h-12 w-12 items-center justify-center rounded-full border'>
+                  <MapPin className='h-5 w-5' />
+                </div>
+                <div>
+                  <div className='font-vazirmatn text-xs opacity-50'>
+                    آدرس
+                  </div>
+                  <div className='font-vazirmatn text-lg'>
+                    تهران، میدان فردوسی
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right side - Form connected to API */}
-          <div className='flex flex-col justify-center'>
-            <form onSubmit={handleSubmit} className='space-y-4 md:space-y-6'>
-              <div
-                className={`transition-all duration-700 ${
-                  isVisible
-                    ? 'translate-x-0 opacity-100'
-                    : 'translate-x-16 opacity-0'
-                }`}
-                style={{ transitionDelay: '200ms' }}
-              >
-                <label className='font-vazirmatn text-foreground/60 mb-1 block text-xs md:mb-2'>
-                  نام
-                </label>
+          {/* Contact Form */}
+          <div
+            className={`bg-foreground/5 rounded-2xl p-6 transition-all duration-1000 md:p-8 ${
+              isVisible ? 'opacity-100' : 'translate-y-12 opacity-0'
+            }`}
+            style={{ transitionDelay: '400ms' }}
+          >
+            <form onSubmit={handleSubmit} className='space-y-6'>
+              <div className='space-y-4'>
                 <input
                   type='text'
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  required
-                  disabled={status === 'submitting'}
-                  className='border-foreground/30 text-foreground placeholder:text-foreground/40 focus:border-foreground/50 w-full border-b bg-transparent py-1.5 text-sm focus:outline-none md:py-2 md:text-base'
-                  placeholder='Your name'
+                  className='font-vazirmatn border-foreground/10 placeholder:text-foreground/30 focus:border-foreground/50 w-full border-b bg-transparent py-3 text-sm focus:outline-none md:text-base'
+                  placeholder='نام و نام خانوادگی'
                 />
-              </div>
-
-              <div
-                className={`transition-all duration-700 ${
-                  isVisible
-                    ? 'translate-x-0 opacity-100'
-                    : 'translate-x-16 opacity-0'
-                }`}
-                style={{ transitionDelay: '350ms' }}
-              >
-                <label className='font-vazirmatn text-foreground/60 mb-1 block text-xs md:mb-2'>
-                  ایمیل
-                </label>
                 <input
                   type='email'
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  required
-                  disabled={status === 'submitting'}
-                  className='border-foreground/30 text-foreground placeholder:text-foreground/40 focus:border-foreground/50 w-full border-b bg-transparent py-1.5 text-sm focus:outline-none md:py-2 md:text-base'
-                  placeholder='your@email.com'
+                  className='font-space border-foreground/10 placeholder:text-foreground/30 focus:border-foreground/50 w-full border-b bg-transparent py-3 text-left text-sm focus:outline-none md:text-base'
+                  placeholder='Email Address'
+                  dir='ltr'
                 />
-              </div>
-
-              <div
-                className={`transition-all duration-700 ${
-                  isVisible
-                    ? 'translate-x-0 opacity-100'
-                    : 'translate-x-16 opacity-0'
-                }`}
-                style={{ transitionDelay: '500ms' }}
-              >
-                <label className='font-vazirmatn text-foreground/60 mb-1 block text-xs md:mb-2'>
-                  پیام شما
-                </label>
                 <textarea
-                  rows={3}
+                  rows={4}
                   value={formData.message}
                   onChange={(e) =>
                     setFormData({ ...formData, message: e.target.value })
                   }
-                  required
-                  disabled={status === 'submitting'}
-                  className='border-foreground/30 font-vazirmatn text-foreground placeholder:text-foreground/40 focus:border-foreground/50 w-full border-b bg-transparent py-1.5 text-sm focus:outline-none md:py-2 md:text-base'
-                  placeholder='در رابطه با پروژه خود بنویسید...'
+                  className='font-vazirmatn border-foreground/10 placeholder:text-foreground/30 focus:border-foreground/50 w-full border-b bg-transparent py-3 text-sm focus:outline-none md:text-base'
+                  placeholder='درباره پروژه یا درخواست خود برایمان بنویسید...'
                 />
               </div>
 
@@ -245,7 +179,7 @@ export function ContactSection() {
 
                 {status === 'success' && (
                   <p className='font-space text-accent animate-in fade-in mt-3 text-center text-sm'>
-                    پیام شما با موفقیت ارسال شد!
+                    پیام شما با موفقیت دریافت شد. به زودی با شما تماس می‌گیریم.
                   </p>
                 )}
                 {status === 'error' && (

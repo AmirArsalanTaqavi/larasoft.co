@@ -182,7 +182,7 @@ export function HomeClient({ services, posts }: HomeClientProps) {
   }, [currentSection]);
 
   return (
-    <main className='w-full overflow-hidden'>
+    <main className='w-dvw overflow-hidden'>
       <div
         ref={scrollContainerRef}
         data-scroll-container
@@ -252,11 +252,13 @@ export function HomeClient({ services, posts }: HomeClientProps) {
                 LARA SOFT
               </span>
             </h1>
-            <p className='font-vazirmatn animate-in fade-in slide-in-from-bottom-4 text-foreground/90 mb-8 max-w-xl text-lg leading-relaxed delay-200 duration-1000 md:text-xl'>
-              <span className='text-accent'>
-                شبکه‌ای از خلاقیت و فناوری برای ساخت آینده دیجیتال
+            <h1 className='font-vazirmatn text-foreground/80 mb-6 max-w-2xl  text-lg font-light leading-relaxed animate-in fade-in slide-in-from-bottom-12 delay-200 duration-1000 md:text-2xl lg:text-3xl'>
+                           شریک مطمئن شما در
+                <br className='hidden md:block' />
+              <span className='text-accent font-medium'>
+                دنیای دیجیتال و فناوری
               </span>
-            </p>
+            </h1>
             <div className='animate-in fade-in slide-in-from-bottom-4 font-vazirmatn z-10 flex flex-col gap-4 delay-300 duration-1000 sm:flex-row sm:items-center'>
               <MagneticButton
                 size='lg'
@@ -270,12 +272,15 @@ export function HomeClient({ services, posts }: HomeClientProps) {
                 variant='secondary'
                 onClick={() => scrollToSection(3)}
               >
-                سرویس‌ها را ببینید
+                خدمات ما
               </MagneticButton>
             </div>
           </div>
 
-          <div className='animate-in fade-in absolute bottom-2 left-1/2 mb-3 -translate-x-1/2 delay-500 duration-1000'>
+          <div
+            dir='ltr'
+            className='animate-in fade-in absolute bottom-2 left-1/2 mb-3 -translate-x-1/2 delay-500 duration-1000'
+          >
             <div className='flex items-center gap-2'>
               <p className='font-space text-foreground/80 text-xs'>
                 Scroll to explore

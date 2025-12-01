@@ -7,7 +7,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 
   return (
     <ScrollProvider>
-      <div ref={scrollContainerRef} className='min-h-dvh overflow-y-auto'>
+      <div ref={scrollContainerRef} className='min-h-full overflow-y-auto'>
         {children}
       </div>
     </ScrollProvider>

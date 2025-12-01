@@ -44,7 +44,7 @@ export default async function PostSinglePage({ params }: Props) {
   const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
 
   return (
-    <main className='min-h-screen w-full border px-6 pt-32 pb-20 md:px-12'>
+    <main className='animate-in fade-in slide-in-from-bottom-8 min-h-screen w-dvw px-6 pt-32 pb-20 duration-700 md:px-12'>
       <article className='bg-background/20 border-accent/30 mx-auto max-w-3xl rounded-2xl border px-5 py-5 backdrop-blur-2xl'>
         <DotPattern className='rounded-2xl' />
         <header className='mb-12 text-center'>

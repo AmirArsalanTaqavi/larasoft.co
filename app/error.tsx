@@ -23,18 +23,15 @@ export default function Error({
         <h2 className='font-vazirmatn text-3xl font-bold text-red-500 md:text-4xl'>
           متاسفانه مشکلی پیش آمده است
         </h2>
-        <p className='font-space text-foreground/60 mx-auto max-w-md'>
+        <p className='font-space text-foreground/60 mx-auto max-w-md' dir='ltr'>
           Something went wrong. Don't worry, it's not you, it's us.
         </p>
       </div>
 
       <div className='flex flex-col items-center gap-4 md:flex-row'>
-        <button
-          onClick={() => reset()}
-          className='font-vazirmatn border-foreground/20 hover:bg-foreground/10 hover:border-foreground/40 rounded-full border px-8 py-3 transition-all active:scale-95'
-        >
+        <MagneticButton variant='ghost' onClick={() => reset()} href='/'>
           تلاش مجدد
-        </button>
+        </MagneticButton>
         <MagneticButton variant='white' href='/'>
           بازگشت به خانه
         </MagneticButton>

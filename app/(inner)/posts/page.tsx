@@ -15,7 +15,7 @@ export default async function BlogPage() {
   const posts = await getPostList();
 
   return (
-    <main className='min-h-screen w-full px-6 pt-32 pb-20 md:px-12'>
+    <main className='min-h-screen w-dvw px-6 pt-32 pb-20 md:px-12'>
       <div className='mx-auto max-w-7xl'>
         <div className='mb-16'>
           <h1 className='font-larasoft text-foreground mb-4 text-5xl md:text-7xl'>
@@ -44,7 +44,7 @@ export default async function BlogPage() {
                   />
                 ) : (
                   // Fallback Gradient if no image
-                  <div className='from-foreground/10 h-full w-full bg-gradient-to-tr to-transparent opacity-50 transition-transform duration-700 group-hover:scale-105' />
+                  <div className='from-foreground/10 h-full w-full bg-linear-to-tr to-transparent opacity-50 transition-transform duration-700 group-hover:scale-105' />
                 )}
               </div>
 

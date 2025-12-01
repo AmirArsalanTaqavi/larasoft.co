@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { getServiceList } from '@/lib/wordpress';
-import { MagneticButton } from '@/components/magnetic-button';
 import { Metadata } from 'next';
 import DotPattern from '@/components/ui/dot-pattern';
 
@@ -10,7 +9,6 @@ export const metadata: Metadata = {
   description: 'خدمات حرفه‌ای فناوری اطلاعات، شبکه و برنامه‌نویسی',
 };
 
-// Revalidate every hour
 export const revalidate = 3600;
 
 export default async function ServicesPage() {
@@ -18,7 +16,7 @@ export default async function ServicesPage() {
 
   return (
     <main className='min-h-screen w-full px-6 pt-32 pb-20 md:px-12'>
-      <div className='relative mx-auto max-w-7xl'>
+      <div className='mx-auto max-w-7xl'>
         {/* Header */}
         <div className='animate-in fade-in slide-in-from-bottom-4 mb-16 duration-700'>
           <h1 className='font-larasoft text-foreground mb-4 text-5xl md:text-7xl'>
@@ -39,26 +37,30 @@ export default async function ServicesPage() {
               className='group relative block'
             >
               <div
-                className='border-foreground/10 bg-foreground/5 hover:border-accent/50 animate-in fade-in slide-in-from-bottom-8 h-full rounded-2xl border p-8 transition-colors duration-500'
+                className='border-background/10 bg-foreground/5 hover:border-accent/50 hover:bg-foreground/10 animate-in fade-in slide-in-from-bottom-8 h-full rounded-2xl border p-8 backdrop-blur-2xl transition-all duration-500'
                 style={{ animationDelay: `${i * 100}ms` }}
               >
-                <DotPattern className='rounded-2xl' />
+                <DotPattern className='rounded-md' />
                 <div className='mb-8 flex items-start justify-between'>
                   <span className='font-space text-foreground/20 group-hover:text-accent text-4xl transition-colors'>
                     {service.number}
                   </span>
-                  <div className='bg-foreground/10 group-hover:bg-accent rounded-full p-2 transition-colors group-hover:text-black'>
-                    <svg
-                      width='24'
-                      height='24'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      className='h-5 w-5 -rotate-45 transition-transform duration-500 group-hover:rotate-0'
-                    >
-                      <path d='M5 12h14M12 5l7 7-7 7' />
-                    </svg>
+
+                  {/* Fixed: Icon Container & Smooth Rotation */}
+                  {/* We rotate this OUTER div instead of the SVG directly to prevent wobble */}
+                  <div className='bg-foreground/10 group-hover:bg-accent relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full transition-all duration-500 group-hover:text-black'>
+                    <div className='flex h-5 w-5 -rotate-45 transform items-center justify-center transition-transform duration-500 ease-out group-hover:rotate-0'>
+                      <svg
+                        width='20'
+                        height='20'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        stroke='currentColor'
+                        strokeWidth='2'
+                      >
+                        <path d='M5 12h14M12 5l7 7-7 7' />
+                      </svg>
+                    </div>
                   </div>
                 </div>
 
