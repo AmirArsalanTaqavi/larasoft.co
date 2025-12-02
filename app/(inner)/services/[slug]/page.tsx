@@ -1,5 +1,5 @@
 import React from 'react';
-import { getServiceList, getItemBySlug } from '@/lib/wordpress';
+import { getServiceList, getService } from '@/lib/wordpress';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { MagneticButton } from '@/components/magnetic-button';
@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const service = await getItemBySlug(slug, 'services');
+  const service = await getService(slug);
 
   if (!service) return { title: 'Service Not Found' };
 
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ServiceSinglePage({ params }: Props) {
   const { slug } = await params;
-  const service = await getItemBySlug(slug, 'services');
+  const service = await getService(slug);
 
   if (!service) notFound();
 

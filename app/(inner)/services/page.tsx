@@ -1,4 +1,3 @@
-import React from 'react';
 import Link from 'next/link';
 import { getServiceList } from '@/lib/wordpress';
 import { Metadata } from 'next';

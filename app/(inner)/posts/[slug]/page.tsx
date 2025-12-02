@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { getPostList, getItemBySlug } from '@/lib/wordpress';
+import { getPostList, getPost } from '@/lib/wordpress';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { MagneticButton } from '@/components/magnetic-button';
@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getItemBySlug(slug, 'posts');
+  const post = await getPost(slug);
 
   if (!post) return { title: 'Post Not Found' };
 
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostSinglePage({ params }: Props) {
   const { slug } = await params;
-  const post = await getItemBySlug(slug, 'posts');
+  const post = await getPost(slug);
 
   if (!post) notFound();
 

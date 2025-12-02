@@ -27,7 +27,7 @@ export function AboutSection({
                   : '-translate-y-12 opacity-0'
               }`}
             >
-              <h2 className='font-larasoft text-foreground mb-3 text-3xl leading-[1.1] font-light tracking-tight md:mb-4 md:text-6xl lg:text-7xl'>
+              <h2 className='font-larasoft text-foreground mb-3 text-4xl leading-[1.1] font-light tracking-tight md:mb-4 md:text-6xl lg:text-7xl'>
                 همراه شما
                 <br />
                 در مسیر
@@ -39,7 +39,7 @@ export function AboutSection({
             <div
               className={`font-vazirmatn space-y-6 text-sm leading-loose md:text-base ${
                 isVisible ? 'opacity-100' : 'opacity-0'
-              } transition-opacity duration-1000 delay-300`}
+              } transition-opacity delay-300 duration-1000`}
             >
               <p className='text-foreground/80'>
                 در لارا سافت، ما فراتر از یک تیم فنی هستیم؛ ما شریک رشد کسب‌وکار
@@ -56,7 +56,7 @@ export function AboutSection({
           </div>
 
           {/* Right side - Stats */}
-          <div className='grid grid-cols-2  gap-8 md:gap-12'>
+          <div className='grid grid-cols-2 gap-8 md:gap-12'>
             {[
               {
                 value: '+۵۰',
@@ -82,7 +82,7 @@ export function AboutSection({
               return (
                 <div
                   key={i}
-                  className={`flex flex-col  justify-center border-t border-foreground/10 pt-4 transition-all duration-700 ${
+                  className={`border-foreground/10 flex flex-col justify-center border-t pt-4 transition-all duration-700 ${
                     isVisible
                       ? 'translate-y-0 opacity-100'
                       : 'translate-y-12 opacity-0'

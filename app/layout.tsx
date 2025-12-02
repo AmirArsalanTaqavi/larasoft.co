@@ -4,11 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import NavbarClient from './navbar-client';
 import { ScrollProvider } from '@/components/scroll-context';
-import {
-  getAcfOptions,
-  getPostList,
-  getServiceList,
-} from '@/lib/wordpress';
+import { getAcfOptions, getPostList, getServiceList } from '@/lib/wordpress';
 import Background from '@/components/background';
 import { StructuredData } from '@/components/structured-data';
 import { GoogleAnalytics } from '@next/third-parties/google';
@@ -145,6 +141,8 @@ export default async function RootLayout({
     getPostList(4),
   ]);
 
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || '';
+
   return (
     <html lang='fa' dir='rtl' suppressHydrationWarning>
       <body
@@ -166,7 +164,7 @@ export default async function RootLayout({
             </ScrollProvider>
           </ThemeProvider>
         </ScrollProvider>
-        <GoogleAnalytics gaId='G-XYZ123456' />
+        {gaId && <GoogleAnalytics gaId={gaId} />}
       </body>
     </html>
   );

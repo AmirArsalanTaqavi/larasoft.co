@@ -200,7 +200,7 @@ export function HomeClient({ services, posts }: HomeClientProps) {
             onClick={() => scrollToSection(1)}
             className='flex items-center gap-2 transition-transform hover:scale-105'
           >
-            <LogoInline className='text-accent w-40 drop-shadow-[0_0_10px_#cedc0060] transition-colors' />
+            <LogoInline className='text-accent h-8 drop-shadow-[0_0_10px_#cedc0060] transition-colors' />
           </button>
 
           <div className='font-vazirmatn hidden items-center gap-8 md:flex'>
@@ -252,9 +252,9 @@ export function HomeClient({ services, posts }: HomeClientProps) {
                 LARA SOFT
               </span>
             </h1>
-            <h1 className='font-vazirmatn text-foreground/80 mb-6 max-w-2xl  text-lg font-light leading-relaxed animate-in fade-in slide-in-from-bottom-12 delay-200 duration-1000 md:text-2xl lg:text-3xl'>
-                           شریک مطمئن شما در
-                <br className='hidden md:block' />
+            <h1 className='font-vazirmatn text-foreground/80 animate-in fade-in slide-in-from-bottom-12 mb-6 max-w-2xl text-lg leading-relaxed font-light delay-200 duration-1000 md:text-2xl lg:text-3xl'>
+              شریک مطمئن شما در
+              <br className='hidden md:block' />
               <span className='text-accent font-medium'>
                 دنیای دیجیتال و فناوری
               </span>

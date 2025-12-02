@@ -6,7 +6,7 @@ export const revalidate = 60; // Update every minute
 export default async function Home() {
   // Simple pass-through: lib already returns normalized data
   const [services, posts] = await Promise.all([
-    getServiceList(4),
+    getServiceList(5),
     getPostList(4),
   ]);
 

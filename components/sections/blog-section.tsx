@@ -20,8 +20,7 @@ export function BlogSection({ posts }: BlogSectionProps) {
     <section
       id='section-2'
       ref={ref}
-      className='flex h-dvh w-dvw shrink-0 snap-start items-center px-6 pt-20 md:px-clear
-       md:pt-0 lg:px-16'
+      className='md:px-clear flex h-dvh w-dvw shrink-0 snap-start items-center px-6 pt-20 md:pt-0 lg:px-16'
     >
       <div className='mx-auto w-full max-w-7xl'>
         {/* Heading */}
@@ -32,7 +31,7 @@ export function BlogSection({ posts }: BlogSectionProps) {
               : '-translate-y-12 opacity-0'
           }`}
         >
-          <h2 className='font-larasoft mb-2 text-2xl font-light tracking-tight md:text-xl lg:text-6xl'>
+          <h2 className='font-larasoft mb-2 text-4xl font-light tracking-tight md:text-4xl lg:text-6xl'>
             دانش و فناوری
           </h2>
           <p className='font-space text-foreground/60 text-sm md:text-base'>
@@ -71,12 +70,12 @@ function BlogCard({
   return (
     <Link
       href={`/posts/${post.slug}`}
-      className={`group border-foreground/10 backdrop-blur-2xl hover:border-accent hover:bg-Background/20 relative flex flex-col justify-between rounded-xl border bg-background/10 p-6 transition-all duration-500 hover:shadow-lg ${
+      className={`group border-foreground/10 hover:border-accent hover:bg-Background/20 bg-background/10 relative flex flex-col justify-between rounded-xl border p-6 backdrop-blur-2xl transition-all duration-500 hover:shadow-lg ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
       }`}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
-      <DotPattern className='rounded-2xl'/>
+      <DotPattern className='rounded-2xl' />
       <div>
         <div className='mb-4 flex items-center justify-between'>
           <span className='font-space text-accent text-xs'>{post.number}</span>
@@ -85,7 +84,7 @@ function BlogCard({
           </span>
         </div>
 
-        <h3 className='font-vazirmatn text-foreground mb-3 text-lg font-medium leading-snug transition-colors group-hover:text-accent md:text-xl'>
+        <h3 className='font-vazirmatn text-foreground group-hover:text-accent mb-3 text-lg leading-snug font-medium transition-colors md:text-xl'>
           {post.title}
         </h3>
         <div
@@ -94,7 +93,7 @@ function BlogCard({
         />
       </div>
 
-      <div className='mt-4 flex items-center gap-2 text-xs font-medium text-foreground/40 transition-colors group-hover:text-accent'>
+      <div className='text-foreground/40 group-hover:text-accent mt-4 flex items-center gap-2 text-xs font-medium transition-colors'>
         <span>مطالعه کنید</span>
         <svg
           width='10'

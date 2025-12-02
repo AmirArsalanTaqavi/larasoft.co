@@ -4,6 +4,7 @@ import { Mail, MapPin } from 'lucide-react';
 import { useReveal } from '@/hooks/use-reveal';
 import { useState, type FormEvent } from 'react';
 import { MagneticButton } from '@/components/magnetic-button';
+import DotPattern from '../ui/dot-pattern';
 
 export function ContactSection() {
   const { ref, isVisible } = useReveal(0.3);
@@ -91,9 +92,7 @@ export function ContactSection() {
                   <Mail className='h-5 w-5' />
                 </div>
                 <div>
-                  <div className='font-vazirmatn text-xs opacity-50'>
-                    ایمیل
-                  </div>
+                  <div className='font-vazirmatn text-xs opacity-50'>ایمیل</div>
                   <div className='font-space text-lg'>info@larasoft.co</div>
                 </div>
               </a>
@@ -110,9 +109,7 @@ export function ContactSection() {
                   <MapPin className='h-5 w-5' />
                 </div>
                 <div>
-                  <div className='font-vazirmatn text-xs opacity-50'>
-                    آدرس
-                  </div>
+                  <div className='font-vazirmatn text-xs opacity-50'>آدرس</div>
                   <div className='font-vazirmatn text-lg'>
                     تهران، میدان فردوسی
                   </div>
@@ -145,9 +142,9 @@ export function ContactSection() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
+                  style={{ textAlign: 'right' }}
                   className='font-space border-foreground/10 placeholder:text-foreground/30 focus:border-foreground/50 w-full border-b bg-transparent py-3 text-left text-sm focus:outline-none md:text-base'
                   placeholder='Email Address'
-                  dir='ltr'
                 />
                 <textarea
                   rows={4}
@@ -178,12 +175,12 @@ export function ContactSection() {
                 </MagneticButton>
 
                 {status === 'success' && (
-                  <p className='font-space text-accent animate-in fade-in mt-3 text-center text-sm'>
+                  <p className='font-vazirmatn text-accent animate-in fade-in mt-3 text-center text-sm'>
                     پیام شما با موفقیت دریافت شد. به زودی با شما تماس می‌گیریم.
                   </p>
                 )}
                 {status === 'error' && (
-                  <p className='font-space animate-in fade-in mt-3 text-center text-sm text-red-500'>
+                  <p className='font-vazirmatn animate-in fade-in mt-3 text-center text-sm text-red-500'>
                     خطایی رخ داد. لطفا دوباره تلاش کنید.
                   </p>
                 )}
