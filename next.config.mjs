@@ -3,7 +3,7 @@ const nextConfig = {
   // CRITICAL for cPanel/Node.js hosting
   output: 'standalone',
 
-  // Allow images from anywhere (WordPress, local, etc.)
+  // Allow images from anywhere
   images: {
     remotePatterns: [
       {
@@ -17,15 +17,7 @@ const nextConfig = {
     ],
   },
 
-  // Optional: Safe build settings
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
-  // Security Headers (From your snippet - excellent addition!)
+  // Security Headers
   async headers() {
     return [
       {
@@ -37,7 +29,7 @@ const nextConfig = {
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY', // Good for security
+            value: 'DENY',
           },
           {
             key: 'X-XSS-Protection',
