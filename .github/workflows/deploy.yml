@@ -24,33 +24,26 @@ jobs:
 
       - name: 4. Build Project
         env:
-          NEXT_PUBLIC_WORDPRESS_API_URL: ${{ secrets.NEXT_PUBLIC_WORDPRESS_API_URL }} # Optional: Add this to secrets too if you want
+          # We map the Secrets to Environment Variables here so the build can see them
+          NEXT_PUBLIC_WORDPRESS_API_URL: ${{ secrets.NEXT_PUBLIC_WORDPRESS_API_URL }}
           NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: npm run build
 
-      - name: 5. Prepare Standalone Build (The Magic Step)
+      - name: 5. Prepare Standalone Build
         run: |
-          # Copy public folder to standalone
           cp -r public .next/standalone/public
-
-          # Create the nested static folder structure
           mkdir -p .next/standalone/.next/static
-
-          # Copy static assets to standalone
           cp -r .next/static .next/standalone/.next/static
-
-          # Create a restart trigger for cPanel (Phusion Passenger)
           mkdir -p .next/standalone/tmp
           touch .next/standalone/tmp/restart.txt
 
       - name: 6. Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          # The folder on your PC to upload (the one we just prepared)
           local-dir: ./.next/standalone/
-          # The folder on cPanel where the app lives
-          server-dir: /larasoft_app/
-          # dangerously-force-upload: true # Uncomment if you have sync issues
+          server-dir: /larasoft_app/ # <--- MAKE SURE THIS FOLDER EXISTS IN CPANEL
+          dangerously-force-upload: true # Helps fix sync errors
