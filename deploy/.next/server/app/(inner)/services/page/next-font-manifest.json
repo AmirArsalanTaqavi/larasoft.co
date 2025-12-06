@@ -1,0 +1,12 @@
+{
+  "pages": {},
+  "app": {
+    "[project]/app/(inner)/services/page": [
+      "static/media/vazirmatn-s.p.6903c73f.woff2",
+      "static/media/delnia-s.p.fa5be439.woff2",
+      "static/media/spacegrotesk-s.p.5364be1a.ttf"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pagesUsingSizeAdjust": false
+}

@@ -1,0 +1,56 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 3. Install Dependencies
+        run: npm ci
+
+      - name: 4. Build Project
+        env:
+          NEXT_PUBLIC_WORDPRESS_API_URL: ${{ secrets.NEXT_PUBLIC_WORDPRESS_API_URL }} # Optional: Add this to secrets too if you want
+          NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
+        run: npm run build
+
+      - name: 5. Prepare Standalone Build (The Magic Step)
+        run: |
+          # Copy public folder to standalone
+          cp -r public .next/standalone/public
+
+          # Create the nested static folder structure
+          mkdir -p .next/standalone/.next/static
+
+          # Copy static assets to standalone
+          cp -r .next/static .next/standalone/.next/static
+
+          # Create a restart trigger for cPanel (Phusion Passenger)
+          mkdir -p .next/standalone/tmp
+          touch .next/standalone/tmp/restart.txt
+
+      - name: 6. Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # The folder on your PC to upload (the one we just prepared)
+          local-dir: ./.next/standalone/
+          # The folder on cPanel where the app lives
+          server-dir: /larasoft_app/
+          # dangerously-force-upload: true # Uncomment if you have sync issues

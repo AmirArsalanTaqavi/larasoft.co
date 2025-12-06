@@ -1,0 +1,17 @@
+{
+  "/(inner)/about/page": "/about",
+  "/(inner)/contact/page": "/contact",
+  "/(inner)/posts/[slug]/page": "/posts/[slug]",
+  "/(inner)/posts/page": "/posts",
+  "/(inner)/privacy/page": "/privacy",
+  "/(inner)/services/[slug]/page": "/services/[slug]",
+  "/(inner)/services/page": "/services",
+  "/(inner)/terms/page": "/terms",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/contact/route": "/api/contact",
+  "/api/quote/route": "/api/quote",
+  "/page": "/",
+  "/robots.txt/route": "/robots.txt",
+  "/sitemap.xml/route": "/sitemap.xml"
+}
