@@ -32,7 +32,7 @@ export function ServicesSection({ services }: ServicesSectionProps) {
               : '-translate-x-12 opacity-0'
           }`}
         >
-          <h2 className='font-larasoft mb-2 text-4xl font-light tracking-tight md:text-4xl lg:text-6xl'>
+          <h2 className='font-larasoft mb-2 text-4xl font-light tracking-tight md:text-6xl'>
             راهکارهای ما
           </h2>
           <p className='font-space text-foreground/60 text-sm md:text-base'>
@@ -45,7 +45,7 @@ export function ServicesSection({ services }: ServicesSectionProps) {
         </div>
 
         {/* Services Grid */}
-        <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-2' dir='ltr'>
+        <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-2' dir='rtl'>
           {displayServices.map((service, index) => (
             <ServiceCard
               key={service.slug}
@@ -71,8 +71,9 @@ function ServiceCard({
 }) {
   return (
     <Link
+      dir='ltr'
       href={`/services/${service.slug}`}
-      className={`group border-foreground/10 hover:border-accent hover:bg-Background/20 bg-background/10 relative flex flex-col justify-between rounded-xl border p-4 backdrop-blur-2xl transition-all duration-500 hover:shadow-lg ${
+      className={`group border-foreground/10 hover:border-accent hover:bg-Background/20 bg-background/10 relative flex flex-col justify-between rounded-xl border p-3 backdrop-blur-2xl transition-all duration-500 hover:shadow-lg ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
       }`}
       style={{ transitionDelay: `${index * 100}ms` }}
@@ -83,15 +84,16 @@ function ServiceCard({
           {service.number}
         </span>
 
-        <div>
-          <h3 className='font-vazirmatn text-foreground mb-1 text-xl font-light transition-transform duration-300 group-hover:-translate-x-2 md:text-2xl lg:text-2xl'>
-            {service.title}
-          </h3>
+        <h3 className='font-vazirmatn text-foreground text-l mb-1 font-light transition-transform duration-300 group-hover:-translate-x-2 md:text-xl'>
+          {service.title}
+        </h3>
 
-          <p className='font-space text-foreground/50 text-sm md:text-sm'>
-            {service.category}
-          </p>
-        </div>
+        <p
+          className='font-space text-foreground/50 fixed right-5 bottom-2 text-sm md:text-sm'
+          dir='ltr'
+        >
+          {service.category}
+        </p>
       </div>
 
       {/* Visual indicator that this is a link */}

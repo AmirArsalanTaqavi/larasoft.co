@@ -70,7 +70,7 @@ function BlogCard({
   return (
     <Link
       href={`/posts/${post.slug}`}
-      className={`group border-foreground/10 hover:border-accent hover:bg-Background/20 bg-background/10 relative flex flex-col justify-between rounded-xl border p-6 backdrop-blur-2xl transition-all duration-500 hover:shadow-lg ${
+      className={`group border-foreground/10 hover:border-accent hover:bg-Background/20 bg-background/10 relative flex flex-col justify-between rounded-xl border p-4 backdrop-blur-2xl transition-all duration-500 hover:shadow-lg ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
       }`}
       style={{ transitionDelay: `${index * 100}ms` }}
@@ -84,11 +84,11 @@ function BlogCard({
           </span>
         </div>
 
-        <h3 className='font-vazirmatn text-foreground group-hover:text-accent mb-3 text-lg leading-snug font-medium transition-colors md:text-xl'>
+        <h3 className='font-vazirmatn text-foreground group-hover:text-accent text-md mb-2 text-justify leading-snug font-medium transition-colors md:text-xl'>
           {post.title}
         </h3>
         <div
-          className='font-vazirmatn text-foreground/60 line-clamp-3 max-w-sm text-sm leading-relaxed'
+          className='font-vazirmatn text-foreground/60 line-clamp-3 max-w-sm text-justify text-xs leading-relaxed md:text-sm'
           dangerouslySetInnerHTML={{ __html: post.excerpt }}
         />
       </div>

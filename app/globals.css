@@ -190,21 +190,45 @@
   }
 }
 
-/* [data-scroll-container] {
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
+/* Add these at the bottom of the file */
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
 }
 
-section {
-  transform: translateZ(0);
-  will-change: transform;
-  contain: layout style paint;
+.animate-blob {
+  animation: blob 10s infinite;
 }
 
-button {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-} */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+@keyframes slide-horizontal {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(12px);
+  } /* Moves right then back */
+}
+
+.animate-slide {
+  animation: slide-horizontal 2s ease-in-out infinite;
+}

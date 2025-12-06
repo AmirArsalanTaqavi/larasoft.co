@@ -1,6 +1,6 @@
 'use client';
 
-import { Mail, MapPin } from 'lucide-react';
+import { Dot, Mail, MapPin } from 'lucide-react';
 import { useReveal } from '@/hooks/use-reveal';
 import { useState, type FormEvent } from 'react';
 import { MagneticButton } from '@/components/magnetic-button';
@@ -56,11 +56,11 @@ export function ContactSection() {
       className='flex h-dvh w-dvw shrink-0 snap-start items-center px-4 pt-20 md:px-12 md:pt-0 lg:px-16'
     >
       <div className='mx-auto w-full max-w-7xl'>
-        <div className='grid gap-12 lg:grid-cols-2 lg:gap-24'>
+        <div className='grid gap-6 lg:grid-cols-2 lg:gap-24'>
           {/* Contact Info */}
           <div>
             <div
-              className={`mb-12 transition-all duration-700 ${
+              className={`mb-8 transition-all duration-700 ${
                 isVisible
                   ? 'translate-y-0 opacity-100'
                   : '-translate-y-12 opacity-0'
@@ -71,14 +71,14 @@ export function ContactSection() {
                 <br />
                 تماس باشید
               </h2>
-              <p className='font-vazirmatn text-foreground/60 max-w-md text-base leading-relaxed'>
+              <p className='font-vazirmatn text-foreground/60 max-w-md text-justify text-base leading-relaxed'>
                 آماده شنیدن چالش‌ها و ایده‌های شما هستیم. برای مشاوره رایگان یا
                 شروع یک پروژه جدید، فرم روبرو را پر کنید یا از طریق راه‌های
                 ارتباطی با ما تماس بگیرید.
               </p>
             </div>
 
-            <div className='space-y-8'>
+            <div className='space-y-4'>
               <a
                 href='mailto:info@larasoft.co'
                 className={`group flex items-center gap-4 transition-all duration-700 ${
@@ -93,7 +93,7 @@ export function ContactSection() {
                 </div>
                 <div>
                   <div className='font-vazirmatn text-xs opacity-50'>ایمیل</div>
-                  <div className='font-space text-lg'>info@larasoft.co</div>
+                  <div className='font-space text-md'>info@larasoft.co</div>
                 </div>
               </a>
 
@@ -110,8 +110,10 @@ export function ContactSection() {
                 </div>
                 <div>
                   <div className='font-vazirmatn text-xs opacity-50'>آدرس</div>
-                  <div className='font-vazirmatn text-lg'>
-                    تهران، میدان فردوسی
+                  <div className='font-vazirmatn text-md'>
+                    تهران، میدان فردوسی، کوچه شاهرود
+                    <br />
+                    پلاک 5 واحد 3
                   </div>
                 </div>
               </div>
@@ -120,13 +122,14 @@ export function ContactSection() {
 
           {/* Contact Form */}
           <div
-            className={`bg-foreground/5 rounded-2xl p-6 transition-all duration-1000 md:p-8 ${
+            className={`bg-foreground/5 relative h-fit rounded-2xl px-4 py-2 transition-all duration-1000 backdrop:backdrop-blur-2xl md:p-8 ${
               isVisible ? 'opacity-100' : 'translate-y-12 opacity-0'
             }`}
             style={{ transitionDelay: '400ms' }}
           >
-            <form onSubmit={handleSubmit} className='space-y-6'>
-              <div className='space-y-4'>
+            <DotPattern className='rounded-2xl' />
+            <form onSubmit={handleSubmit} className='relative z-10 space-y-2'>
+              <div className='space-y-2'>
                 <input
                   type='text'
                   value={formData.name}
@@ -147,7 +150,7 @@ export function ContactSection() {
                   placeholder='Email Address'
                 />
                 <textarea
-                  rows={4}
+                  rows={3}
                   value={formData.message}
                   onChange={(e) =>
                     setFormData({ ...formData, message: e.target.value })
@@ -167,7 +170,6 @@ export function ContactSection() {
               >
                 <MagneticButton
                   variant='primary'
-                  size='lg'
                   className='font-vazirmatn w-full disabled:cursor-not-allowed disabled:opacity-50'
                   onClick={status === 'submitting' ? undefined : undefined}
                 >

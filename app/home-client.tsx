@@ -9,6 +9,7 @@ import { useEffect, useState, useRef } from 'react';
 import FloatingLogo from '@/components/floating_logo';
 import { LogoInline } from '@/components/svgs';
 import { NormalizedService, NormalizedPost } from '@/lib/wordpress';
+import { Menu, X } from 'lucide-react'; // Import icons
 
 interface HomeClientProps {
   services: NormalizedService[];
@@ -19,6 +20,8 @@ export function HomeClient({ services, posts }: HomeClientProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // Mobile menu state
+
   const touchStartY = useRef(0);
   const touchStartX = useRef(0);
   const shaderContainerRef = useRef<HTMLDivElement>(null);
@@ -27,10 +30,8 @@ export function HomeClient({ services, posts }: HomeClientProps) {
 
   // Loading Strategy
   useEffect(() => {
-    // Quick fade in for perceived performance
     const fadeTimer = setTimeout(() => setIsLoaded(true), 500);
 
-    // Deep check for shaders (optional, can remove if causing delay)
     const checkShaderReady = () => {
       if (shaderContainerRef.current) {
         const canvas = shaderContainerRef.current.querySelector('canvas');
@@ -50,6 +51,7 @@ export function HomeClient({ services, posts }: HomeClientProps) {
   }, []);
 
   const scrollToSection = (index: number) => {
+    setMobileMenuOpen(false); // Close menu if open
     if (scrollContainerRef.current) {
       const sections = scrollContainerRef.current.children;
       if (sections[index]) {
@@ -70,7 +72,6 @@ export function HomeClient({ services, posts }: HomeClientProps) {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      // Allow vertical scroll inside container, prevent browser native reload/scroll
       if (Math.abs(e.touches[0].clientY - touchStartY.current) > 10) {
         e.preventDefault();
       }
@@ -82,7 +83,6 @@ export function HomeClient({ services, posts }: HomeClientProps) {
       const deltaY = touchStartY.current - touchEndY;
       const deltaX = touchStartX.current - touchEndX;
 
-      // Detect swipe up/down with threshold
       if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 50) {
         if (deltaY > 0 && currentSection < 4) {
           scrollToSection(currentSection + 1);
@@ -95,7 +95,7 @@ export function HomeClient({ services, posts }: HomeClientProps) {
     const container = scrollContainerRef.current;
     if (container) {
       container.addEventListener('touchstart', handleTouchStart, {
-        passive: false, // Changed to false to allow preventDefault
+        passive: false,
       });
       container.addEventListener('touchmove', handleTouchMove, {
         passive: false,
@@ -114,14 +114,11 @@ export function HomeClient({ services, posts }: HomeClientProps) {
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      // Map vertical mouse wheel to horizontal scroll sections
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         e.preventDefault();
-
         if (!scrollContainerRef.current || isScrollingRef.current) return;
-
         scrollContainerRef.current.scrollBy({
-          left: -e.deltaY, // Inverted or direct based on preference
+          left: -e.deltaY,
           behavior: 'auto',
         });
       }
@@ -139,7 +136,6 @@ export function HomeClient({ services, posts }: HomeClientProps) {
     };
   }, []);
 
-  // Sync current section state with scroll position
   useEffect(() => {
     const handleScroll = () => {
       if (scrollThrottleRef.current) return;
@@ -181,8 +177,11 @@ export function HomeClient({ services, posts }: HomeClientProps) {
     };
   }, [currentSection]);
 
+  const navItems = ['خانه', 'سرویس ها', 'مقالات', 'درباره ما', 'تماس با ما'];
+
   return (
     <main className='w-dvw overflow-hidden'>
+      {/* Scroll Container */}
       <div
         ref={scrollContainerRef}
         data-scroll-container
@@ -191,11 +190,13 @@ export function HomeClient({ services, posts }: HomeClientProps) {
         }`}
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
+        {/* Navbar */}
         <nav
           className={`fixed top-0 right-0 left-0 z-50 flex items-center justify-between px-6 py-6 transition-opacity duration-700 md:px-12 ${
             isLoaded ? 'opacity-100' : 'opacity-0'
           }`}
         >
+          {/* Logo */}
           <button
             onClick={() => scrollToSection(1)}
             className='flex items-center gap-2 transition-transform hover:scale-105'
@@ -203,50 +204,88 @@ export function HomeClient({ services, posts }: HomeClientProps) {
             <LogoInline className='text-accent h-8 drop-shadow-[0_0_10px_#cedc0060] transition-colors' />
           </button>
 
+          {/* Desktop Menu */}
           <div className='font-vazirmatn hidden items-center gap-8 md:flex'>
-            {['خانه', 'سرویس ها', 'مقالات', 'درباره ما', 'تماس با ما'].map(
-              (item, index) => (
-                <button
-                  key={item}
-                  onClick={() => scrollToSection(index + 2)}
-                  className={`group text-md relative font-medium transition-colors ${
+            {navItems.map((item, index) => (
+              <button
+                key={item}
+                onClick={() => scrollToSection(index + 2)}
+                className={`group text-md relative font-medium transition-colors ${
+                  currentSection === index
+                    ? 'text-accent'
+                    : 'text-accent/70 hover:text-foreground'
+                }`}
+              >
+                {item}
+                <span
+                  className={`bg-foreground absolute -bottom-1 left-0 h-px transition-all duration-300 ${
                     currentSection === index
-                      ? 'text-accent'
-                      : 'text-accent/70 hover:text-foreground'
+                      ? 'w-full'
+                      : 'w-0 group-hover:w-full'
                   }`}
-                >
-                  {item}
-                  <span
-                    className={`bg-foreground absolute -bottom-1 left-0 h-px transition-all duration-300 ${
-                      currentSection === index
-                        ? 'w-full'
-                        : 'w-0 group-hover:w-full'
-                    }`}
-                  />
-                </button>
-              )
-            )}
+                />
+              </button>
+            ))}
           </div>
 
-          <MagneticButton
-            className='font-vazirmatn'
-            variant='primary'
-            onClick={() => scrollToSection(6)}
-          >
-            شروع
-          </MagneticButton>
+          {/* Right Side: CTA + Mobile Toggle */}
+          <div className='flex items-center gap-4'>
+            <MagneticButton
+              className='font-vazirmatn hidden md:flex'
+              variant='primary'
+              onClick={() => scrollToSection(6)}
+            >
+              شروع
+            </MagneticButton>
+
+            {/* Mobile Hamburger Button */}
+            <button
+              className='text-accent p-2 md:hidden'
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </nav>
 
-        <FloatingLogo className='z-0 drop-shadow-[0_0_10px_#cedc0060]' />
+        {/* Mobile Menu Overlay */}
+        <div
+          className={`bg-background/95 fixed inset-0 z-40 backdrop-blur-xl transition-transform duration-500 md:hidden ${
+            mobileMenuOpen ? 'translate-y-0' : '-translate-y-full'
+          }`}
+        >
+          <div className='flex h-full flex-col items-center justify-center gap-8'>
+            {navItems.map((item, index) => (
+              <button
+                key={item}
+                onClick={() => scrollToSection(index + 2)}
+                className='font-vazirmatn text-foreground hover:text-accent text-2xl font-medium transition-colors'
+              >
+                {item}
+              </button>
+            ))}
+            <MagneticButton
+              className='font-vazirmatn mt-8'
+              variant='primary'
+              onClick={() => scrollToSection(6)}
+            >
+              شروع پروژه
+            </MagneticButton>
+          </div>
+        </div>
+
+        <FloatingLogo className='z-0 scale-85 md:scale-100' />
 
         {/* Hero Section */}
         <section className='z-1 flex min-h-dvh w-dvw shrink-0 flex-col justify-end px-6 pt-24 pb-16 md:px-12 md:pb-24'>
           <div className='max-w-3xl'>
             <div className='animate-in fade-in slide-in-from-bottom-4 border-foreground/20 bg-foreground/15 mb-4 inline-block rounded-full border p-2 backdrop-blur-md duration-700'>
-              <p className='font-vazirmatn text-accent text-xs'>خوش آمدید!</p>
+              <p dir='ltr' className='font-space text-accent text-xs'>
+                Technology is AMAZING!
+              </p>
             </div>
             <h1 className='font-larasoft animate-in fade-in slide-in-from-bottom-8 font-accent text-foreground z-0 mb-6 text-6xl leading-[1.1] tracking-tight duration-1000 md:text-7xl lg:text-8xl'>
-              <span className='text-accent'>
+              <span className='text-accent drop-shadow-[0_0_35px_rgba(206,220,0,0.4)]'>
                 لاراسافت
                 <br />
                 LARA SOFT
@@ -277,16 +316,15 @@ export function HomeClient({ services, posts }: HomeClientProps) {
             </div>
           </div>
 
-          <div
-            dir='ltr'
-            className='animate-in fade-in absolute bottom-2 left-1/2 mb-3 -translate-x-1/2 delay-500 duration-1000'
-          >
+          {/* Scroll Indicator with Slide Animation */}
+          <div className='animate-in fade-in absolute bottom-2 left-1/2 mb-3 -translate-x-1/2 delay-500 duration-1000'>
             <div className='flex items-center gap-2'>
-              <p className='font-space text-foreground/80 text-xs'>
-                Scroll to explore
+              <p className='font-vazirmatn text-foreground/80 text-xs'>
+                اسلاید کنید
               </p>
-              <div className='border-foreground/20 bg-foreground/15 flex h-6 w-12 items-center justify-center rounded-full border backdrop-blur-md'>
-                <div className='bg-foreground/80 h-2 w-2 animate-pulse rounded-full' />
+              <div className='border-foreground/20 bg-foreground/15 flex h-6 w-12 items-center justify-end rounded-full border px-1 backdrop-blur-md'>
+                {/* Changed 'justify-center' to 'justify-start' and added 'animate-slide' */}
+                <div className='bg-foreground/80 animate-slide slide h-2 w-2 rounded-full' />
               </div>
             </div>
           </div>

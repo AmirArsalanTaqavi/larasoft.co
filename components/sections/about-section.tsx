@@ -17,7 +17,7 @@ export function AboutSection({
       className='flex h-dvh w-dvw shrink-0 snap-start items-center px-4 pt-20 md:px-12 md:pt-0 lg:px-16'
     >
       <div className='mx-auto w-full max-w-7xl'>
-        <div className='grid gap-8 md:grid-cols-2 md:gap-16 lg:gap-24'>
+        <div className='grid gap-6 md:grid-cols-2 md:gap-16 lg:gap-24'>
           {/* Left side - Story */}
           <div>
             <div
@@ -37,7 +37,7 @@ export function AboutSection({
             </div>
 
             <div
-              className={`font-vazirmatn space-y-6 text-sm leading-loose md:text-base ${
+              className={`font-vazirmatn space-y-5 text-justify text-xs leading-loose md:text-base ${
                 isVisible ? 'opacity-100' : 'opacity-0'
               } transition-opacity delay-300 duration-1000`}
             >
@@ -56,7 +56,7 @@ export function AboutSection({
           </div>
 
           {/* Right side - Stats */}
-          <div className='grid grid-cols-2 gap-8 md:gap-12'>
+          <div className='font-vazirmatn grid grid-cols-2 gap-4 md:gap-12'>
             {[
               {
                 value: '+۵۰',
@@ -82,7 +82,7 @@ export function AboutSection({
               return (
                 <div
                   key={i}
-                  className={`border-foreground/10 flex flex-col justify-center border-t pt-4 transition-all duration-700 ${
+                  className={`border-foreground/10 flex flex-col justify-center border-t pt-3 transition-all duration-700 ${
                     isVisible
                       ? 'translate-y-0 opacity-100'
                       : 'translate-y-12 opacity-0'
@@ -93,11 +93,11 @@ export function AboutSection({
                     maxWidth: i % 2 === 0 ? '100%' : '85%',
                   }}
                 >
-                  <div className='font-vazirmatn text-foreground text-3xl font-light md:text-6xl lg:text-7xl'>
+                  <div className='font-vazirmatn text-foreground text-2xl font-light md:text-6xl lg:text-7xl'>
                     {stat.value}
                   </div>
                   <div>
-                    <div className='font-vazirmatn text-foreground text-base font-light md:text-xl'>
+                    <div className='font-vazirmatn text-foreground text-md font-light md:text-xl'>
                       {stat.label}
                     </div>
                     <div className='text-foreground/60 text-xs'>
@@ -111,7 +111,7 @@ export function AboutSection({
         </div>
 
         <div
-          className={`mt-8 flex flex-wrap gap-3 transition-all duration-700 md:mt-16 md:gap-4 ${
+          className={`font-vazirmatn mt-6 flex flex-wrap gap-3 transition-all duration-700 md:mt-16 md:gap-4 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
           }`}
           style={{ transitionDelay: '750ms' }}
